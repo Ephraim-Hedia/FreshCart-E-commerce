@@ -1,0 +1,15 @@
+<a
+  [routerLink]="['/categories', category()._id]"
+  class="group block bg-white rounded-lg p-4 hover:shadow-lg transition-shadow duration-300 border border-gray-100"
+>
+  <div class="aspect-square mb-3 overflow-hidden rounded-lg">
+    <img
+      [src]="category().image"
+      [alt]="category().name"
+      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+    />
+  </div>
+  <h3 class="text-center text-sm font-medium text-gray-900">
+    {{ category().name }}
+  </h3>
+</a>

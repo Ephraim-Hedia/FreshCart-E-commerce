@@ -1,0 +1,32 @@
+<div class="flex items-center justify-between mb-6">
+  <h2 class="text-3xl font-bold text-secondary flex items-center gap-3">
+    <span class="w-1 h-8 bg-primary rounded-full"></span>
+    <span>
+      {{ title() }}
+      @if (titleHighlight()) {
+        <span class="text-primary ml-1">{{ titleHighlight() }}</span>
+      }
+    </span>
+  </h2>
+  @if (viewAllLink()) {
+    <a
+      [routerLink]="viewAllLink()"
+      class="text-primary text-xl hover:text-primary/80 font-medium flex items-center gap-2 transition-colors"
+    >
+      {{ viewAllText() }}
+      <svg
+        class="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 5l7 7-7 7"
+        />
+      </svg>
+    </a>
+  }
+</div>

@@ -6,10 +6,12 @@ import { ProductsService } from '../../core/services/products.service';
 import { Product } from '../../core/models/product.interface';
 import { ProductsSectionComponent } from './components/products-section/products-section.component';
 import { DealBannersComponent } from './components/deal-banners/deal-banners.component';
+import { FeaturesSectionComponent } from '../../shared/ui/features-section/features-section.component';
+import { NewsletterComponent } from './components/newsletter/newsletter.component';
 
 @Component({
   selector: 'app-home',
-  imports: [CategoriesSectionComponent,ProductsSectionComponent,DealBannersComponent],
+  imports: [CategoriesSectionComponent,ProductsSectionComponent,DealBannersComponent,FeaturesSectionComponent,NewsletterComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })

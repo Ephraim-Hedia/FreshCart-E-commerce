@@ -1,1 +1,351 @@
-<p>navbar works!</p>
+<!-- ===================== TOP STRIP ===================== -->
+@if (showTopStrip()) {
+  <div class="hidden lg:block bg-white border-b border-gray-200">
+    <div class="container mx-auto px-4 flex items-center justify-between h-9">
+      <!-- Left -->
+      <div class="flex items-center gap-5 text-[#6B7280] text-xs">
+        <span class="flex items-center gap-1.5">
+          <i class="fa-solid fa-truck text-green-600 text-xs"></i>
+          Free Shipping on Orders 500 EGP
+        </span>
+        <span class="flex items-center gap-1.5">
+          <i class="fa-solid fa-tag text-green-600 text-xs"></i>
+          New Arrivals Daily
+        </span>
+      </div>
+      <!-- Right -->
+      <div class="hidden md:flex items-center gap-4 text-[#6B7280] text-xs">
+        <a href="tel:+18001234567" class="flex items-center gap-1 hover:text-green-600">
+          <i class="fa-solid fa-phone"></i>
+          +1 (800) 123-4567
+        </a>
+        <a href="mailto:support@freshcart.com" class="flex items-center gap-1 hover:text-green-600">
+          <i class="fa-solid fa-envelope"></i>
+          support&#64;freshcart.com
+        </a>
+        @if (isLoggedIn()) {
+          <span class="flex items-center gap-1">
+            <i class="fa-solid fa-user"></i>
+            {{ userData().name }}
+          </span>
+          <button (click)="signOut()" class="flex items-center gap-1 hover:text-green-600">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Sign Out
+          </button>
+        } @else {
+          <a routerLink="/auth/login" class="flex items-center gap-1 hover:text-green-600">
+            <i class="fa-solid fa-user"></i>
+            Sign In
+          </a>
+          <a routerLink="/auth/register" class="flex items-center gap-1 hover:text-green-600">
+            <i class="fa-solid fa-user-plus"></i>
+            Sign Up
+          </a>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ===================== MAIN NAVBAR ===================== -->
+<!-- EVERYTHING IN ONE SINGLE ROW: Logo | Search | NavLinks | Support | Icons -->
+<nav
+  class="bg-white border-b-2 border-green-600 z-50 transition-all duration-300"
+  [class.fixed]="isSticky()"
+  [class.top-0]="isSticky()"
+  [class.left-0]="isSticky()"
+  [class.right-0]="isSticky()"
+  [class.shadow-sm]="isSticky()"
+>
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-between gap-4 h-16">
+
+      <!-- 1. LOGO -->
+      <a routerLink="/" class="flex-shrink-0" >
+        <img src="/fresh-logo.svg" alt="FreshCart" class="h-6 lg:h-8 w-auto">
+      </a>
+
+      <!-- 2. SEARCH BAR (desktop only, takes flexible space) -->
+      <div class="hidden lg:flex flex-1 max-w-2xl">
+        <form (submit)="onSearch()" class="w-full relative">
+          <input
+            type="search"
+            [(ngModel)]="searchQuery"
+            name="search"
+            placeholder="Search for products, brands and more..."
+            class="w-full pl-4 pr-12 py-2 text-sm bg-[#F3F4F6] border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
+          >
+          <button
+            type="submit"
+            class="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-green-600 hover:bg-green-700 text-white rounded-full transition-colors"
+          >
+            <i class="fa-solid fa-search text-xs"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- 3. NAV LINKS (desktop only) -->
+      <div class="hidden lg:flex items-center gap-1">
+        <a
+          routerLink="/"
+          routerLinkActive="text-green-600 font-semibold"
+          [routerLinkActiveOptions]="{exact: true}"
+          class="px-3 py-2 text-sm font-medium text-[#374151] hover:text-green-600 transition-colors"
+        >
+          Home
+        </a>
+        <a
+          routerLink="/shop"
+          routerLinkActive="text-green-600 font-semibold"
+          class="px-3 py-2 text-sm font-medium text-[#374151] hover:text-green-600 transition-colors"
+        >
+          Shop
+        </a>
+
+        <!-- Categories dropdown -->
+        <div
+          class="relative"
+          (mouseenter)="openCategoriesDropdown()"
+          (mouseleave)="closeCategoriesDropdown()"
+        >
+          <button
+            type="button"
+            class="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[#374151] hover:text-green-600 transition-colors"
+            [class.text-green-600]="showCategoriesDropdown()"
+          >
+            Categories
+            <i class="fa-solid fa-chevron-down text-[10px] transition-transform" [class.rotate-180]="showCategoriesDropdown()"></i>
+          </button>
+
+          @if (showCategoriesDropdown()) {
+            <div class="absolute top-full left-0 mt-1 w-52 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">
+              @for (category of categories; track category.name) {
+                <a
+                  [routerLink]="category.route"
+                  class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-600 transition-colors"
+                >
+                  {{ category.name }}
+                </a>
+              }
+            </div>
+          }
+        </div>
+
+        <a
+          routerLink="/brands"
+          routerLinkActive="text-green-600 font-semibold"
+          class="px-3 py-2 text-sm font-medium text-[#374151] hover:text-green-600 transition-colors"
+        >
+          Brands
+        </a>
+      </div>
+
+      <!-- Spacer -->
+      <div class="flex-1 block lg:hidden"></div>
+
+      <!-- 4. SUPPORT BADGE (desktop only) -->
+      <a routerLink="/support" class="hidden lg:flex items-center gap-2 flex-shrink-0 text-[#374151] hover:text-green-600 transition-colors">
+        <i class="fa-solid fa-headset text-green-600 text-xl"></i>
+        <div class="flex flex-col leading-none">
+          <span class="text-[10px] text-gray-400">Support</span>
+          <span class="text-xs font-semibold">24/7 Help</span>
+        </div>
+      </a>
+
+      <!-- 5. WISHLIST ICON (desktop only) -->
+      <a routerLink="/wishlist" class="hidden lg:flex relative items-center text-xl rounded-full hover:bg-gray-100 p-2 text-gray-500 hover:text-primary ">
+        <i class="fa-regular fa-heart text-xl"></i>
+        @if (wishlistItemsCount() > 0) {
+          <span class="absolute -top-1.5 -right-1.5 w-4 h-4 flex items-center justify-center text-[9px] font-bold text-white bg-red-500 rounded-full">
+            {{ wishlistItemsCount() }}
+          </span>
+        }
+      </a>
+
+      <!-- 6. CART ICON (desktop only) -->
+      <a routerLink="/cart" class="hidden lg:flex relative items-center text-xl rounded-full hover:bg-gray-100 p-2 text-gray-500 hover:text-primary ">
+        <i class="fa-solid fa-cart-shopping text-xl"></i>
+        @if (cartItemsCount() > 0) {
+          <span class="absolute -top-1.5 -right-1.5 w-4 h-4 flex items-center justify-center text-[9px] font-bold text-white bg-green-600 rounded-full">
+            {{ cartItemsCount() }}
+          </span>
+        }
+      </a>
+
+      <!-- 7. USER ICON + DROPDOWN (desktop only) -->
+      <div class="hidden lg:block relative shrink-0 rounded-full hover:bg-gray-100 p-2">
+        <button
+          type="button"
+          (click)="toggleUserDropdown()"
+          class="flex items-center text-xl text-gray-500 hover:text-primary "
+        >
+          <i class="cursor-pointer fa-solid fa-circle-user text-xl "></i>
+        </button>
+
+        @if (showUserDropdown()) {
+          <div
+            class="absolute right-0 top-full mt-2 w-60 bg-white rounded-lg shadow-xl border border-gray-100 z-50 overflow-hidden"
+            (click)="$event.stopPropagation()"
+          >
+            @if (isLoggedIn()) {
+              <!-- User info header -->
+              <div class="flex items-center gap-3 px-4 py-3 bg-gray-50 border-b border-gray-100">
+                <div class="w-9 h-9 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid fa-user text-sm text-green-600"></i>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-sm font-semibold text-gray-900 truncate">{{ userData().name }}</p>
+                  <p class="text-xs text-gray-500 truncate">{{ userData().email }}</p>
+                </div>
+              </div>
+              <!-- Menu items -->
+              <div class="py-1">
+                <button (click)="navigateToProfile()" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 text-left">
+                  <i class="fa-regular fa-user w-4 text-gray-500"></i> My Profile
+                </button>
+                <button (click)="navigateToOrders()" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 text-left">
+                  <i class="fa-solid fa-bag-shopping w-4 text-gray-500"></i> My Orders
+                </button>
+                <button (click)="navigateToWishlist()" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 text-left">
+                  <i class="fa-regular fa-heart w-4 text-gray-500"></i> My Wishlist
+                </button>
+                <button (click)="navigateToAddresses()" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 text-left">
+                  <i class="fa-solid fa-location-dot w-4 text-gray-500"></i> Addresses
+                </button>
+                <button (click)="navigateToSettings()" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 text-left">
+                  <i class="fa-solid fa-gear w-4 text-gray-500"></i> Settings
+                </button>
+              </div>
+              <!-- Sign out -->
+              <div class="border-t border-gray-100">
+                <button (click)="signOut()" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 text-left">
+                  <i class="fa-solid fa-right-from-bracket w-4"></i> Sign Out
+                </button>
+              </div>
+            } @else {
+              <div class="p-3 space-y-2">
+                <a routerLink="/auth/login" (click)="closeUserDropdown()" class="block text-center py-2 text-sm font-medium bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">Sign In</a>
+                <a routerLink="/auth/register" (click)="closeUserDropdown()" class="block text-center py-2 text-sm font-medium border border-green-600 text-green-600 rounded-lg hover:bg-green-50 transition-colors">Create Account</a>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- ===== MOBILE RIGHT SIDE ===== -->
+      <!-- Wishlist (mobile) -->
+      <a routerLink="/wishlist" class="flex lg:hidden relative items-center text-gray-500">
+        <i class="fa-regular fa-heart text-xl"></i>
+        @if (wishlistItemsCount() > 0) {
+          <span class="absolute -top-1 -right-1 w-4 h-4 flex items-center justify-center text-[9px] font-bold text-white bg-red-500 rounded-full">
+            {{ wishlistItemsCount() }}
+          </span>
+        }
+      </a>
+      <!-- Cart (mobile) -->
+      <a routerLink="/cart" class="flex lg:hidden relative items-center text-gray-500">
+        <i class="fa-solid fa-cart-shopping text-xl"></i>
+        @if (cartItemsCount() > 0) {
+          <span class="absolute -top-1 -right-1 w-4 h-4 flex items-center justify-center text-[9px] font-bold text-white bg-green-600 rounded-full">
+            {{ cartItemsCount() }}
+          </span>
+        }
+      </a>
+      <!-- Hamburger (mobile) -->
+      <button
+        type="button"
+        (click)="toggleMobileMenu()"
+        class="flex lg:hidden items-center justify-center w-9 h-9 bg-primary text-white rounded-full hover:bg-green-700 transition-colors"
+      >
+        <i class="fa-solid fa-bars text-sm"></i>
+      </button>
+
+    </div>
+  </div>
+</nav>
+
+<!-- ===================== MOBILE DRAWER ===================== -->
+@if (isMobileMenuOpen()) {
+  <!-- Overlay -->
+  <div class="fixed inset-0 bg-black/50 z-40" (click)="closeMobileMenu()"></div>
+
+  <!-- Drawer slides in from right -->
+  <div class="fixed top-0 right-0 h-full w-72 bg-white z-50 flex flex-col shadow-2xl animate-slide-in-right">
+
+    <!-- Drawer Header -->
+    <div class="flex items-center justify-between px-4 py-4 border-b border-gray-100">
+      <a routerLink="/" (click)="closeMobileMenu()">
+        <img src="/fresh-logo.svg" alt="FreshCart" class="h-8">
+      </a>
+      <button (click)="closeMobileMenu()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors">
+        <i class="fa-solid fa-xmark text-gray-500 text-lg"></i>
+      </button>
+    </div>
+
+    <!-- Search -->
+    <div class="px-4 py-3 border-b border-gray-100">
+      <form (submit)="onSearch()" class="relative">
+        <input
+          type="search"
+          [(ngModel)]="searchQuery"
+          name="mobileSearch"
+          placeholder="Search products..."
+          class="w-full pl-3 pr-12 py-2.5 text-sm bg-gray-100 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+        >
+        <button type="submit" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-green-600 text-white rounded-lg">
+          <i class="fa-solid fa-search text-xs"></i>
+        </button>
+      </form>
+    </div>
+
+    <!-- Nav links -->
+    <div class="px-2 py-2 border-b border-gray-100">
+      <a routerLink="/" (click)="closeMobileMenu()" class="flex items-center px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-green-600 transition-colors">Home</a>
+      <a routerLink="/shop" (click)="closeMobileMenu()" class="flex items-center px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-green-600 transition-colors">Shop</a>
+      <a routerLink="/categories" (click)="closeMobileMenu()" class="flex items-center px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-green-600 transition-colors">Categories</a>
+      <a routerLink="/brands" (click)="closeMobileMenu()" class="flex items-center px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-green-600 transition-colors">Brands</a>
+    </div>
+
+    <!-- Wishlist & Cart -->
+    <div class="px-2 py-2 border-b border-gray-100">
+      <a routerLink="/wishlist" (click)="closeMobileMenu()" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+        <i class="fa-regular fa-heart text-red-500 w-5"></i>
+        Wishlist
+      </a>
+      <a routerLink="/cart" (click)="closeMobileMenu()" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+        <i class="fa-solid fa-cart-shopping text-green-600 w-5"></i>
+        Cart
+        @if (cartItemsCount() > 0) {
+          <span class="ml-auto w-5 h-5 flex items-center justify-center text-xs font-bold text-white bg-green-600 rounded-full">
+            {{ cartItemsCount() }}
+          </span>
+        }
+      </a>
+    </div>
+
+    <!-- User section -->
+    <div class="px-2 py-2 mt-auto">
+      @if (isLoggedIn()) {
+        <div class="flex items-center gap-3 px-3 py-2.5">
+          <i class="fa-solid fa-user text-gray-400 w-5"></i>
+          <span class="text-sm font-medium text-gray-700">{{ userData().name }}</span>
+        </div>
+        <button (click)="signOut(); closeMobileMenu()" class="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors text-left">
+          <i class="fa-solid fa-right-from-bracket w-5"></i>
+          Sign Out
+        </button>
+      } @else {
+        <div class="px-2 space-y-2">
+          <a routerLink="/auth/login" (click)="closeMobileMenu()" class="block text-center py-2.5 text-sm font-medium bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">Sign In</a>
+          <a routerLink="/auth/register" (click)="closeMobileMenu()" class="block text-center py-2.5 text-sm font-medium border border-green-600 text-green-600 rounded-lg hover:bg-green-50 transition-colors">Create Account</a>
+        </div>
+      }
+    </div>
+
+  </div>
+}
+
+<!-- Click outside to close user dropdown -->
+@if (showUserDropdown()) {
+  <div class="fixed inset-0 z-40" (click)="closeUserDropdown()"></div>
+}

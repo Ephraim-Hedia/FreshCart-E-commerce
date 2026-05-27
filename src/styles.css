@@ -17,4 +17,6 @@
 
 body{
     font-family: "Exo", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
 }

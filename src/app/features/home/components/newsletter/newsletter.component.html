@@ -1,0 +1,123 @@
+<section class="py-16 bg-linear-to-r from-green-50 to-white-50">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 shadow-xl">
+        <!-- Left Side - Newsletter Section -->
+        <div class="bg-white rounded-3xl p-8 shadow-xl lg:col-span-3 ">
+          <!-- Badge -->
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-envelope text-white text-xl"></i>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-primary uppercase tracking-wider">Newsletter</p>
+              <p class="text-xs text-gray-500">50,000+ subscribers</p>
+            </div>
+          </div>
+  
+          <!-- Title -->
+          <h2 class="text-3xl font-bold text-secondary mb-3">
+            Get the Freshest Updates <span class="text-primary">Delivered Free</span>
+          </h2>
+          
+          <!-- Subtitle -->
+          <p class="text-gray-600 mb-6">
+            Weekly recipes, seasonal offers & exclusive member perks.
+          </p>
+  
+          <!-- Features Pills -->
+          <div class="flex flex-wrap gap-3 mb-6">
+            <div class="inline-flex items-center gap-2 bg-green-50 text-gray-700 px-4 py-2 rounded-full text-sm">
+              <i class="fa-solid fa-check text-primary"></i>
+              <span>Fresh Picks Weekly</span>
+            </div>
+            <div class="inline-flex items-center gap-2 bg-green-50 text-gray-700 px-4 py-2 rounded-full text-sm">
+              <i class="fa-solid fa-truck text-primary"></i>
+              <span>Free Delivery Codes</span>
+            </div>
+            <div class="inline-flex items-center gap-2 bg-green-50 text-gray-700 px-4 py-2 rounded-full text-sm">
+              <i class="fa-solid fa-tag text-primary"></i>
+              <span>Members-Only Deals</span>
+            </div>
+          </div>
+  
+          <!-- Email Form -->
+          <form (submit)="onSubscribe(); $event.preventDefault()" class="flex gap-2 mb-3">
+            <input
+              type="email"
+              [(ngModel)]="email"
+              name="email"
+              placeholder="you&#64;example.com"
+              required
+              class="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            />
+            <button
+              type="submit"
+              class="px-6 py-3 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg transition-colors whitespace-nowrap inline-flex items-center gap-2"
+            >
+              Subscribe
+              <i class="fa-solid fa-arrow-right text-sm"></i>
+            </button>
+          </form>
+          
+          <p class="text-xs text-gray-500 flex items-center gap-1">
+            <span>✨</span>
+            <span>Unsubscribe anytime. No spam, ever.</span>
+          </p>
+        </div>
+  
+        <!-- Right Side - Mobile App Card -->
+        <div class="bg-linear-to-br lg:col-span-2 from-gray-900 to-gray-800 rounded-3xl p-8 text-white shadow-xl">
+          <!-- Badge -->
+          <div class="inline-flex items-center gap-2 bg-primary/20 text-primary px-3 py-1 rounded-full text-xs font-semibold mb-6">
+            <i class="fa-solid fa-mobile-screen-button"></i>
+            <span>MOBILE APP</span>
+          </div>
+  
+          <!-- Title -->
+          <h2 class="text-3xl font-bold mb-4">
+            Shop Faster on Our App
+          </h2>
+  
+          <!-- Description -->
+          <p class="text-gray-400 mb-8">
+            Get app-exclusive deals & 15% off your first order.
+          </p>
+  
+          <!-- App Store Buttons -->
+          <div class="space-y-3 mb-6">
+            <a
+              href="#"
+              class="flex items-center gap-4 bg-gray-800/50 hover:bg-gray-700/50 rounded-xl p-4 transition-colors group"
+            >
+              <i class="fa-brands fa-apple text-3xl"></i>
+              <div>
+                <p class="text-xs text-gray-400">DOWNLOAD ON</p>
+                <p class="font-semibold">App Store</p>
+              </div>
+            </a>
+            
+            <a
+              href="#"
+              class="flex items-center gap-4 bg-gray-800/50 hover:bg-gray-700/50 rounded-xl p-4 transition-colors group"
+            >
+              <i class="fa-brands fa-google-play text-3xl"></i>
+              <div>
+                <p class="text-xs text-gray-400">GET IT ON</p>
+                <p class="font-semibold">Google Play</p>
+              </div>
+            </a>
+          </div>
+  
+          <!-- Rating -->
+          <div class="flex items-center gap-2">
+            <div class="flex gap-1">
+              @for (star of [1, 2, 3, 4, 5]; track star) {
+                <i class="fa-solid fa-star text-yellow-400 text-xs"></i>
+              }
+            </div>
+            <span class="text-sm text-gray-400">4.9 · 100K+ downloads</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>

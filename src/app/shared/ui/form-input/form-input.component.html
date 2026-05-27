@@ -1,0 +1,76 @@
+<div class="flex flex-col gap-1.5">
+
+    <!-- Label Row -->
+    <div class="flex items-center justify-between">
+      <label class="text-sm font-medium text-gray-700">
+        {{ label() }}
+      </label>
+      @if (rightLabel() && rightRoute()) {
+        <a [routerLink]="rightRoute()" class="text-sm font-medium text-primary hover:underline">
+          {{ rightLabel() }}
+        </a>
+      }
+    </div>
+  
+    <!-- Input Wrapper -->
+    <div class="relative">
+  
+      <!-- Left Icon -->
+      @if (icon()) {
+        <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
+          <i class="fa-solid {{ icon() }} text-gray-400 text-sm"></i>
+        </div>
+      }
+  
+      <!-- Input -->
+      <input
+        [type]="inputType"
+        [placeholder]="placeholder()"
+        [formControl]="$any(ctrl)"
+        class="w-full py-2.5 text-sm text-gray-900 bg-white border rounded-lg
+               focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
+               placeholder:text-gray-400 transition-colors
+               disabled:bg-gray-50 disabled:text-gray-500"
+        [class.pl-10]="icon()"
+        [class.pl-4]="!icon()"
+        [class.pr-10]="isPassword || hint()"
+        [class.pr-4]="!isPassword && !hint()"
+        [class.border-gray-300]="!isInvalid"
+        [class.border-red-400]="isInvalid"
+        [class.focus:ring-red-400]="isInvalid"
+        [class.focus:ring-primary]="!isInvalid"
+      >
+  
+      <!-- Password Toggle -->
+      @if (isPassword) {
+        <button
+          type="button"
+          (click)="togglePassword()"
+          class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          @if (showPassword()) {
+            <i class="fa-solid fa-eye-slash text-sm"></i>
+          } @else {
+            <i class="fa-solid fa-eye text-sm"></i>
+          }
+        </button>
+      }
+  
+      <!-- Hint (right side, e.g. "Egyptian numbers only") -->
+      @if (hint() && !isPassword) {
+        <div class="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none">
+          <span class="text-xs text-gray-400">{{ hint() }}</span>
+        </div>
+      }
+  
+    </div>
+  
+    <!-- Error Message -->
+    @if (isInvalid) {
+      <p class="text-xs text-red-500 flex items-center gap-1">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        {{ errorMessage }}
+      </p>
+    }
+  
+  </div>

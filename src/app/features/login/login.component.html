@@ -1,1 +1,162 @@
-<p>login works!</p>
+<div class="min-h-screen bg-white flex flex-col">
+
+    <!-- Main Content -->
+    <main class="flex-1 flex items-center">
+      <div class="container mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
+  
+          <!-- ===== LEFT PANEL (hidden on mobile) ===== -->
+          <div class="hidden lg:flex flex-col items-center justify-center gap-8">
+  
+            <!-- Illustration -->
+            <div class="w-full">
+              <img
+                src="login-Image.png"
+                alt="FreshCart Shopping"
+                class="w-full h-96 object-cover rounded-2xl shadow-lg"
+              >
+            </div>
+  
+            <!-- Title -->
+            <div class="text-center">
+              <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                FreshCart - Your One-Stop Shop for <span class="text-primary">Fresh Products</span>
+              </h1>
+              <p class="text-gray-500 text-lg">
+                Join thousands of happy customers who trust FreshCart for their daily grocery needs
+              </p>
+            </div>
+  
+            <!-- Feature Badges -->
+            <div class="flex items-center justify-center gap-6 text-sm text-gray-600">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-truck text-primary"></i>
+                <span>Free Delivery</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-primary"></i>
+                <span>Secure Payment</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-headset text-primary"></i>
+                <span>24/7 Support</span>
+              </div>
+            </div>
+  
+          </div>
+  
+          <!-- ===== RIGHT PANEL — Auth Card ===== -->
+          <div class="w-full mx-auto">
+            <div class="bg-white  rounded-2xl shadow-xl p-8 lg:p-12">
+  
+              <!-- Card Header -->
+              <div class="text-center mb-6">
+                <a routerLink="/" class="inline-block mb-4">
+                  <img src="/fresh-logo.svg" alt="FreshCart" class="h-10 mx-auto">
+                </a>
+                <h2 class="text-2xl font-bold text-gray-900">Welcome Back!</h2>
+                <p class="text-gray-500 text-sm mt-1">Sign in to continue your fresh shopping experience</p>
+              </div>
+  
+              <!-- Social Auth -->
+              <app-social-auth-buttons
+                (googleClick)="onGoogleLogin()"
+                (facebookClick)="onFacebookLogin()"
+              />
+  
+              <!-- Login Form -->
+              <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4 mt-4" novalidate>
+  
+                <!-- Email -->
+                <app-form-input
+                  label="Email Address"
+                  type="email"
+                  placeholder="Enter your email"
+                  icon="fa-envelope"
+                  [control]="emailCtrl"
+                  class="border-0"
+                />
+  
+                <!-- Password -->
+                <app-form-input
+                  label="Password"
+                  type="password"
+                  placeholder="Enter your password"
+                  icon="fa-lock"
+                  [control]="passwordCtrl"
+                  rightLabel="Forgot Password?"
+                  rightRoute="/forget-password"
+                  class="border-0"
+                />
+  
+                <!-- Keep me signed in -->
+                <div class="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="keepSigned"
+                    formControlName="keepSigned"
+                    class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer"
+                  >
+                  <label for="keepSigned" class="text-sm text-gray-600 cursor-pointer select-none">
+                    Keep me signed in
+                  </label>
+                </div>
+  
+                <!-- API Error -->
+                @if (errorMsg()) {
+                  <div class="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+                    <i class="fa-solid fa-circle-exclamation shrink-0"></i>
+                    <span>{{ errorMsg() }}</span>
+                  </div>
+                }
+  
+                <!-- Submit Button -->
+                <button
+                  type="submit"
+                  [disabled]="isLoading()"
+                  class="cursor-pointer w-full py-3 px-4 bg-primary hover:bg-green-700 disabled:bg-green-400 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  @if (isLoading()) {
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    Signing in...
+                  } @else {
+                    Sign In
+                  }
+                </button>
+  
+              </form>
+  
+              <!-- Footer Links -->
+              <div class="mt-5 text-center space-y-4">
+                <p class="text-sm text-gray-600">
+                  New to FreshCart?
+                  <a routerLink="/register" class="text-primary font-semibold hover:underline">
+                    Create an account
+                  </a>
+                </p>
+  
+                <!-- Trust Badges -->
+                <div class="flex items-center justify-center gap-4 pt-2 border-t border-gray-100">
+                  <div class="flex items-center gap-1 text-xs text-gray-500">
+                    <i class="fa-solid fa-lock text-gray-400"></i>
+                    <span>SSL Secured</span>
+                  </div>
+                  <div class="flex items-center gap-1 text-xs text-gray-500">
+                    <i class="fa-solid fa-users text-gray-400"></i>
+                    <span>50K+ Users</span>
+                  </div>
+                  <div class="flex items-center gap-1 text-xs text-gray-500">
+                    <i class="fa-solid fa-star text-yellow-400"></i>
+                    <span>4.9 Rating</span>
+                  </div>
+                </div>
+              </div>
+  
+            </div>
+          </div>
+  
+        </div>
+      </div>
+    </main>
+  
+  </div>

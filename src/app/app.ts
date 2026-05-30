@@ -3,10 +3,11 @@ import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './layouts/navbar/navbar.component';
 import { FooterComponent } from './layouts/footer/footer.component';
 import { FeaturesSectionComponent } from './shared/ui/features-section/features-section.component';
+import { NgxSpinnerComponent } from "ngx-spinner";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,NavbarComponent,FooterComponent,FeaturesSectionComponent],
+  imports: [RouterOutlet,NavbarComponent,FooterComponent,FeaturesSectionComponent,NgxSpinnerComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

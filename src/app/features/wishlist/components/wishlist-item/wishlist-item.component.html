@@ -1,0 +1,142 @@
+<!-- ══════════════════════════════════════════════════════
+     DESKTOP ROW (md+) — Table row layout
+══════════════════════════════════════════════════════ -->
+<div
+  class="hidden md:grid grid-cols-[2fr_1fr_1fr_auto] items-center gap-4 px-6 py-4 border-b border-gray-100 last:border-0 transition-opacity duration-200 hover:bg-gray-50"
+  [class.opacity-50]="isRemoving() || isAddingToCart()"
+>
+  <!-- Product -->
+  <div class="flex items-center gap-4">
+    <div class="w-16 h-16 rounded-xl bg-gray-50 border border-gray-100 overflow-hidden shrink-0">
+      <img
+        [src]="product().imageCover"
+        [alt]="product().title"
+        class="w-full h-full object-contain p-1"
+      >
+    </div>
+    <div class="min-w-0">
+      <h3 class="font-semibold text-gray-900 text-sm leading-snug line-clamp-2">
+        {{ product().title }}
+      </h3>
+      <p class="text-xs text-gray-400 mt-0.5">{{ product().category?.name }}</p>
+    </div>
+  </div>
+
+  <!-- Price -->
+  <div>
+    <p class="font-semibold text-gray-900">{{ displayPrice }} EGP</p>
+    @if (hasDiscount) {
+      <p class="text-xs text-gray-400 line-through">{{ product().price }} EGP</p>
+    }
+  </div>
+
+  <!-- Status -->
+  <div class="flex items-center gap-1.5">
+    <span class="w-2 h-2 rounded-full bg-primary shrink-0"></span>
+    <span class="text-sm text-gray-600">In Stock</span>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex items-center gap-2">
+    <button
+      type="button"
+      (click)="addToCart.emit()"
+      [disabled]="isAddingToCart() || isRemoving()"
+      class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-primary hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      @if (isAddingToCart()) {
+        <i class="fa-solid fa-spinner fa-spin text-xs"></i>
+      } @else {
+        <i class="fa-solid fa-cart-shopping text-xs"></i>
+      }
+      Add to Cart
+    </button>
+
+    <button
+      type="button"
+      (click)="remove.emit()"
+      [disabled]="isRemoving() || isAddingToCart()"
+      class="cursor-pointer w-9 h-9 flex items-center justify-center border border-gray-200 text-gray-400 hover:border-red-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+      title="Remove from wishlist"
+    >
+      @if (isRemoving()) {
+        <i class="fa-solid fa-spinner fa-spin text-xs"></i>
+      } @else {
+        <i class="fa-solid fa-trash text-xs"></i>
+      }
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     MOBILE CARD (< md) — Card layout
+══════════════════════════════════════════════════════ -->
+<div
+  class="md:hidden bg-white rounded-xl border border-gray-100 shadow-sm p-4 transition-opacity duration-200"
+  [class.opacity-50]="isRemoving() || isAddingToCart()"
+>
+  <!-- Top: image + info -->
+  <div class="flex items-start gap-3 mb-3">
+    <div class="w-16 h-16 rounded-xl bg-gray-50 border border-gray-100 overflow-hidden shrink-0">
+      <img
+        [src]="product().imageCover"
+        [alt]="product().title"
+        class="w-full h-full object-contain p-1"
+      >
+    </div>
+    <div class="flex-1 min-w-0">
+      <h3 class="font-semibold text-gray-900 text-sm leading-snug line-clamp-2">
+        {{ product().title }}
+      </h3>
+      <p class="text-xs text-gray-400 mt-0.5">{{ product().category?.name }}</p>
+    </div>
+  </div>
+
+  <!-- Price -->
+  <div class="flex items-center gap-2 mb-1.5">
+    <span class="text-xs text-gray-500">Price:</span>
+    <span class="font-semibold text-gray-900 text-sm">{{ displayPrice }} EGP</span>
+    @if (hasDiscount) {
+      <span class="text-xs text-gray-400 line-through">{{ product().price }} EGP</span>
+    }
+  </div>
+
+  <!-- Status -->
+  <div class="flex items-center gap-2 mb-3">
+    <span class="text-xs text-gray-500">Status:</span>
+    <div class="flex items-center gap-1">
+      <span class="w-2 h-2 rounded-full bg-primary shrink-0"></span>
+      <span class="text-xs text-gray-600">In Stock</span>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex items-center gap-2">
+    <button
+      type="button"
+      (click)="addToCart.emit()"
+      [disabled]="isAddingToCart() || isRemoving()"
+      class="cursor-pointer flex-1 flex items-center justify-center gap-2 py-2.5 bg-primary hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      @if (isAddingToCart()) {
+        <i class="fa-solid fa-spinner fa-spin text-xs"></i>
+      } @else {
+        <i class="fa-solid fa-cart-shopping text-xs"></i>
+      }
+      Add to Cart
+    </button>
+
+    <button
+      type="button"
+      (click)="remove.emit()"
+      [disabled]="isRemoving() || isAddingToCart()"
+      class="cursor-pointer w-10 h-10 flex items-center justify-center border border-gray-200 text-gray-400 hover:border-red-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+    >
+      @if (isRemoving()) {
+        <i class="fa-solid fa-spinner fa-spin text-xs"></i>
+      } @else {
+        <i class="fa-solid fa-trash text-xs"></i>
+      }
+    </button>
+  </div>
+</div>

@@ -47,6 +47,10 @@ export class LoginComponent {
         // headerInterceptor will attach this token to every subsequent request
         localStorage.setItem('freshToken', res.token);
         this.authService.isLogged.set(true);
+
+        localStorage.setItem('email',email!)
+        this.authService.email.set(email!)
+        
         this.authService.setUserFromToken(); // ✅ decode token → update userData signal
         this.router.navigate(['/']);
 

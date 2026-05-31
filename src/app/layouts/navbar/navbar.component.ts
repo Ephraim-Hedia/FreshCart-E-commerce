@@ -20,6 +20,8 @@ export class NavbarComponent implements OnInit {
       if(localStorage.getItem('freshToken'))
       {
         this.authService.isLogged.set(true)
+        this.authService.email.set(localStorage.getItem('email')??'') 
+        this.authService.setUserFromToken()           
       }
     }
   }

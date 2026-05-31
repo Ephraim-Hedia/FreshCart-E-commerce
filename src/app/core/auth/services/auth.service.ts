@@ -12,7 +12,8 @@ export class AuthService {
   private readonly router = inject(Router)
   isLogged = signal<boolean>(false)
   userData  = signal<{ name: string; email: string }>({ name: '', email: '' });
- 
+  email = signal('')
+
   // Decode JWT payload (base64) to extract user name & email
   // Called after login and on navbar init (page refresh)
   setUserFromToken(): void {
@@ -22,7 +23,7 @@ export class AuthService {
       const payload = JSON.parse(atob(token.split('.')[1]));
       this.userData.set({
         name:  payload.name  ?? '',
-        email: payload.email ?? '',
+        email: this.email() ,
       });
     } catch {
       this.userData.set({ name: '', email: '' });

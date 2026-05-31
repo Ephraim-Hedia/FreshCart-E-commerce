@@ -1,1 +1,203 @@
-<p>cart works!</p>
+<div class="min-h-screen bg-gray-50">
+    <div class="container mx-auto px-4 py-8">
+  
+      <!-- Breadcrumb -->
+      <nav class="text-sm text-gray-500 mb-6">
+        <a routerLink="/" class="hover:text-primary">Home</a>
+        <span class="mx-2">/</span>
+        <span class="text-gray-900 font-medium">Shopping Cart</span>
+      </nav>
+  
+      <!-- Page Title -->
+      <div class="mb-6">
+        <div class="flex items-center gap-3 mb-1">
+          <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-cart-shopping text-white"></i>
+          </div>
+          <h1 class="text-3xl font-bold text-gray-900">Shopping Cart</h1>
+        </div>
+        @if (cartData()?.products?.length) {
+          <p class="text-gray-500 ml-14">
+            You have
+            <span class="text-primary font-semibold">{{ cartData()!.products.length }} items</span>
+            in your cart
+          </p>
+        }
+      </div>
+  
+      <!-- ── Loading ── -->
+      @if (isPageLoading()) {
+        <div class="flex items-center justify-center py-24">
+          <i class="fa-solid fa-spinner fa-spin text-primary text-3xl"></i>
+        </div>
+      }
+  
+      <!-- ── Empty Cart ── -->
+      @else if (!cartData()?.products?.length) {
+        <div class="flex flex-col items-center justify-center py-24 gap-4">
+          <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center">
+            <i class="fa-solid fa-cart-shopping text-gray-300 text-4xl"></i>
+          </div>
+          <h2 class="text-xl font-bold text-gray-900">Your cart is empty</h2>
+          <p class="text-gray-500 text-sm">Looks like you haven't added anything yet.</p>
+          <a
+            routerLink="/shop"
+            class="mt-2 px-6 py-3 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-colors"
+          >
+            Start Shopping
+          </a>
+        </div>
+      }
+  
+      <!-- ── Cart Content ── -->
+      @else {
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  
+          <!-- ══ LEFT: Cart Items ══ -->
+          <div class="lg:col-span-2 flex flex-col gap-4">
+  
+            @for (item of cartData()!.products; track item._id) {
+              <app-cart-item
+                [item]="item"
+                [isLoading]="isItemLoading(item.product._id)"
+                (increase)="onIncrease(item)"
+                (decrease)="onDecrease(item)"
+                (remove)="onRemove(item.product._id)"
+              />
+            }
+  
+            <!-- Bottom Links -->
+            <div class="flex items-center justify-between pt-2">
+              <a routerLink="/shop" class="text-primary text-sm hover:underline flex items-center gap-1">
+                <i class="fa-solid fa-arrow-left text-xs"></i>
+                Continue Shopping
+              </a>
+              <button
+                type="button"
+                (click)="clearCart()"
+                class="cursor-pointer text-gray-400 text-sm hover:text-red-500 transition-colors flex items-center gap-1"
+              >
+                <i class="fa-solid fa-trash text-xs"></i>
+                Clear all items
+              </button>
+            </div>
+  
+          </div>
+  
+          <!-- ══ RIGHT: Order Summary ══ -->
+          <div class="lg:col-span-1">
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden sticky top-24">
+  
+              <!-- Green Header -->
+              <div class="bg-primary px-5 py-4">
+                <div class="flex items-center gap-2 text-white">
+                  <i class="fa-solid fa-cart-shopping"></i>
+                  <span class="font-bold">Order Summary</span>
+                </div>
+                <p class="text-green-100 text-xs mt-0.5">
+                  {{ cartData()!.products.length }} items in your cart
+                </p>
+              </div>
+  
+              <div class="p-5 flex flex-col gap-4">
+  
+                <!-- Free Shipping Banner -->
+                <div class="bg-green-50 border border-green-100 rounded-lg p-3 flex items-center gap-3">
+                  <i class="fa-solid fa-truck text-primary text-lg shrink-0"></i>
+                  <div>
+                    <p class="text-primary font-semibold text-sm">Free Shipping!</p>
+                    <p class="text-green-600 text-xs">You qualify for free delivery</p>
+                  </div>
+                </div>
+  
+                <!-- Price Breakdown -->
+                <div class="flex flex-col gap-3">
+                  <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-500">Subtotal</span>
+                    <span class="font-medium text-gray-900">{{ cartData()!.totalCartPrice }} EGP</span>
+                  </div>
+                  <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-500">Shipping</span>
+                    <span class="font-semibold text-primary">FREE</span>
+                  </div>
+                  <div class="border-t border-gray-100 pt-3 flex items-center justify-between">
+                    <span class="font-semibold text-gray-900">Total</span>
+                    <span class="font-bold text-lg text-gray-900">
+                      {{ cartData()!.totalCartPrice }}
+                      <span class="text-sm font-normal text-gray-400">EGP</span>
+                    </span>
+                  </div>
+                </div>
+  
+                <!-- Coupon -->
+                @if (!showCouponInput()) {
+                  <button
+                    type="button"
+                    (click)="showCouponInput.set(true)"
+                    class="cursor-pointer w-full py-2.5 border border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-primary hover:text-primary transition-colors flex items-center justify-center gap-2"
+                  >
+                    <i class="fa-solid fa-tag text-xs"></i>
+                    Apply Promo Code
+                  </button>
+                } @else {
+                  <div class="flex gap-2">
+                    <input
+                      type="text"
+                      [(ngModel)]="couponCode"
+                      placeholder="Enter promo code"
+                      class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    >
+                    <button
+                      type="button"
+                      (click)="applyCoupon()"
+                      [disabled]="isApplyingCoupon()"
+                      class="cursor-pointer px-3 py-2 bg-primary text-white text-sm rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
+                    >
+                      @if (isApplyingCoupon()) {
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                      } @else {
+                        Apply
+                      }
+                    </button>
+                  </div>
+                }
+  
+                <!-- Checkout Button -->
+                <a
+                  routerLink="/checkout"
+                  class="w-full py-3 bg-primary hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  <i class="fa-solid fa-lock"></i>
+                  Secure Checkout
+                </a>
+  
+                <!-- Trust Badges -->
+                <div class="flex items-center justify-center gap-4 text-xs text-gray-400">
+                  <span class="flex items-center gap-1">
+                    <i class="fa-solid fa-shield-halved text-primary"></i>
+                    Secure Payment
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <i class="fa-solid fa-truck text-primary"></i>
+                    Fast Delivery
+                  </span>
+                </div>
+  
+                <!-- Continue Shopping -->
+                <a
+                  routerLink="/shop"
+                  class="text-center text-primary text-sm hover:underline flex items-center justify-center gap-1"
+                >
+                  <i class="fa-solid fa-arrow-left text-xs"></i>
+                  Continue Shopping
+                </a>
+  
+              </div>
+            </div>
+          </div>
+  
+        </div>
+      }
+  
+    </div>
+  </div>

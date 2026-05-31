@@ -3,6 +3,8 @@ import { Component, computed, HostListener, inject, OnInit, PLATFORM_ID, Signal,
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../core/auth/services/auth.service';
+import { CartService } from '../../core/services/cart.service';
+import { WishlistService } from '../../core/services/wishlist.service';
 
 @Component({
   selector: 'app-navbar',
@@ -11,18 +13,24 @@ import { AuthService } from '../../core/auth/services/auth.service';
   styleUrl: './navbar.component.css',
 })
 export class NavbarComponent implements OnInit {
-  private readonly authService = inject(AuthService)
-  private readonly pLATFORM_ID = inject(PLATFORM_ID)
+  private readonly authService     = inject(AuthService);
+  private readonly cartService     = inject(CartService);
+  private readonly wishlistService = inject(WishlistService);
+  private readonly platformId      = inject(PLATFORM_ID);
 
   ngOnInit(): void {
-    if(isPlatformBrowser(this.pLATFORM_ID))
+    if(isPlatformBrowser(this.platformId))
     {
-      if(localStorage.getItem('freshToken'))
-      {
-        this.authService.isLogged.set(true)
-        this.authService.email.set(localStorage.getItem('email')??'') 
-        this.authService.setUserFromToken()           
+      if (localStorage.getItem('freshToken')) {
+        this.authService.isLogged.set(true);
+        this.authService.email.set(localStorage.getItem('email') ?? '');
+        this.authService.setUserFromToken();
+ 
+        // ✅ Load real counts from API on every page refresh
+        this.cartService.getLoggedUserCart().subscribe();
+        this.wishlistService.getLoggedUserWishlist().subscribe();
       }
+
     }
   }
 
@@ -30,7 +38,11 @@ export class NavbarComponent implements OnInit {
   isLoggedIn = computed(() => this.authService.isLogged());
   userData   = computed(() => this.authService.userData()); // ✅ real data from JWT
   
-  
+    // ── Cart & Wishlist counts from services (update navbar badge reactively) ──
+    cartItemsCount     = computed(() => this.cartService.cartCount());
+    wishlistItemsCount = computed(() => this.wishlistService.wishlistCount());
+
+
   // ── UI State ───────────────────────────────────────────────────────────────
   isSticky             = signal(false);
   showTopStrip         = signal(true);
@@ -39,10 +51,6 @@ export class NavbarComponent implements OnInit {
   showCategoriesDropdown = signal(false);
   searchQuery          = '';
   
-  // TODO: connect to CartService & WishlistService
-  cartItemsCount     = signal(0);
-  wishlistItemsCount = signal(0);
- 
   // ── Categories ─────────────────────────────────────────────────────────────
   categories = [
     { name: 'All Categories',  route: '/categories' },
@@ -95,6 +103,8 @@ export class NavbarComponent implements OnInit {
   // ── User Actions ───────────────────────────────────────────────────────────
   signOut(): void {
     this.authService.signOut(); // clears token + userData + navigates to /
+    this.cartService.cartCount.set(0);
+    this.wishlistService.wishlistCount.set(0);
     this.closeUserDropdown();
     this.closeMobileMenu();
   }

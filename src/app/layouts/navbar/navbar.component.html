@@ -28,16 +28,16 @@
             <i class="fa-solid fa-user"></i>
             {{ userData().name }}
           </span>
-          <button (click)="signOut()" class="flex items-center gap-1 hover:text-green-600">
+          <button (click)="signOut()" class="flex items-center gap-1 hover:text-green-600 cursor-pointer">
             <i class="fa-solid fa-right-from-bracket"></i>
             Sign Out
           </button>
         } @else {
-          <a routerLink="/login" class="flex items-center gap-1 hover:text-green-600">
+          <a routerLink="/login" class="flex items-center gap-1 hover:text-green-600 cursor-pointer">
             <i class="fa-solid fa-user"></i>
             Sign In
           </a>
-          <a routerLink="/register" class="flex items-center gap-1 hover:text-green-600">
+          <a routerLink="/register" class="flex items-center gap-1 hover:text-green-600 cursor-pointer">
             <i class="fa-solid fa-user-plus"></i>
             Sign Up
           </a>

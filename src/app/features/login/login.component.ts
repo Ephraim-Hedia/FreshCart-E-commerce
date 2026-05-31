@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { FormInputComponent } from '../../shared/ui/form-input/form-input.component';
 import { SocialAuthButtonsComponent } from '../../shared/ui/social-auth-buttons/social-auth-buttons.component';
 import { AuthService } from '../../core/auth/services/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,7 @@ export class LoginComponent {
   private readonly fb          = inject(FormBuilder);
   private readonly router      = inject(Router);
   private readonly authService = inject(AuthService);
-
+  private readonly toastr = inject(ToastrService);
   // Only controls button state
   // Spinner  → handled globally by loadingInterceptor (NgxSpinner)
   // Errors   → handled globally by errorInterceptor  (ngx-toastr) 
@@ -44,15 +45,20 @@ export class LoginComponent {
     this.authService.signIn({ email, password }).subscribe({
       next: (res) => {
         // headerInterceptor will attach this token to every subsequent request
-        localStorage.setItem('freshToken', res.token); 
+        localStorage.setItem('freshToken', res.token);
+        this.authService.isLogged.set(true);
+        this.authService.setUserFromToken(); // ✅ decode token → update userData signal
         this.router.navigate(['/']);
-        this.authService.isLogged.set(true)
-      },
-      error: () => this.isLoading.set(false) // toastr already shown by interceptor
-    });
 
-    // Simulate for now
-    setTimeout(() => this.isLoading.set(false), 1000);
+      },
+      error: () => this.isLoading.set(false), // toastr already shown by interceptor
+      complete:()=>{
+        this.toastr.success('FreshCart', 'Login Successfully',{
+          progressBar : true,
+          closeButton : true
+        });
+      }
+    });
   }
 
   onGoogleLogin():   void { console.log('Google login'); }

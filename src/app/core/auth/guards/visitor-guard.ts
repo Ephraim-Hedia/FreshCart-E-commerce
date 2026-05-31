@@ -4,17 +4,17 @@ import { CanActivateFn, Router } from '@angular/router';
 
 export const visitorGuard: CanActivateFn = (route, state) => {
 
-  const pLATFORM_ID = inject(PLATFORM_ID)
-  const router = inject(Router)
-  if(isPlatformBrowser(pLATFORM_ID))
-  {
-    if(localStorage.getItem('freshToken') == null)
-    {
-      return true ;
+  const platformId = inject(PLATFORM_ID);
+  const router     = inject(Router);
+
+  if (isPlatformBrowser(platformId)) {
+    // If already logged in → redirect to home, block access to login/register/forget-password
+    if (localStorage.getItem('freshToken') !== null) {
+      return router.parseUrl('/'); // ✅ return the URL tree (was missing before)
     }
-    else{
-      router.parseUrl('/login');
-    }
+    return true;
   }
+
+  // SSR: allow access (no localStorage on server)
   return true;
 };

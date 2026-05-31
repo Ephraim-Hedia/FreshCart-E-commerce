@@ -24,66 +24,84 @@ export class NavbarComponent implements OnInit {
     }
   }
 
-  isLoggedIn = computed(()=>{
-    return this.authService.isLogged()
-  })
+  // ── Auth state (from AuthService signals) ──────────────────────────────────
+  isLoggedIn = computed(() => this.authService.isLogged());
+  userData   = computed(() => this.authService.userData()); // ✅ real data from JWT
   
-  isSticky = signal(false);
-  showTopStrip = signal(true);
-  isMobileMenuOpen = signal(false);
-  searchQuery = '';
-  cartItemsCount = signal(3);
-  wishlistItemsCount = signal(5);
-  showUserDropdown = signal(false);
+  
+  // ── UI State ───────────────────────────────────────────────────────────────
+  isSticky             = signal(false);
+  showTopStrip         = signal(true);
+  isMobileMenuOpen     = signal(false);
+  showUserDropdown     = signal(false);
   showCategoriesDropdown = signal(false);
+  searchQuery          = '';
   
-  userData = signal({ name: 'sdf', email: 'sdf@gmail.com' });
+  // TODO: connect to CartService & WishlistService
+  cartItemsCount     = signal(0);
+  wishlistItemsCount = signal(0);
  
+  // ── Categories ─────────────────────────────────────────────────────────────
   categories = [
-    { name: 'All Categories', route: '/categories' },
-    { name: 'Electronics', route: '/categories/electronics' },
+    { name: 'All Categories',  route: '/categories' },
+    { name: 'Electronics',     route: '/categories/electronics' },
     { name: "Women's Fashion", route: '/categories/womens-fashion' },
-    { name: "Men's Fashion", route: '/categories/mens-fashion' },
+    { name: "Men's Fashion",   route: '/categories/mens-fashion' },
     { name: 'Beauty & Health', route: '/categories/beauty-health' },
   ];
+
  
+  // ── Scroll ─────────────────────────────────────────────────────────────────
   @HostListener('window:scroll', [])
-  onWindowScroll() {
+  onWindowScroll(): void {
     const scrollY = window.scrollY || document.documentElement.scrollTop;
     this.showTopStrip.set(scrollY < 50);
     this.isSticky.set(scrollY > 50);
   }
+  
  
-  onSearch() {
+  // ── Search ─────────────────────────────────────────────────────────────────
+  onSearch(): void {
     if (this.searchQuery.trim()) {
-      console.log('Search:', this.searchQuery);
       // TODO: this.router.navigate(['/search'], { queryParams: { q: this.searchQuery } });
+      console.log('Search:', this.searchQuery);
     }
   }
- 
-  toggleMobileMenu() {
+  
+  // ── Mobile Menu ────────────────────────────────────────────────────────────  
+
+  toggleMobileMenu(): void {
     this.isMobileMenuOpen.update(v => !v);
     document.body.style.overflow = this.isMobileMenuOpen() ? 'hidden' : '';
   }
- 
-  closeMobileMenu() {
+
+  closeMobileMenu(): void {
     this.isMobileMenuOpen.set(false);
     document.body.style.overflow = '';
   }
+
  
-  toggleUserDropdown() { this.showUserDropdown.update(v => !v); }
-  closeUserDropdown()  { this.showUserDropdown.set(false); }
+  // ── User Dropdown ──────────────────────────────────────────────────────────
+  toggleUserDropdown(): void { this.showUserDropdown.update(v => !v); }
+  closeUserDropdown():  void { this.showUserDropdown.set(false); }
  
-  openCategoriesDropdown()  { this.showCategoriesDropdown.set(true); }
-  closeCategoriesDropdown() { this.showCategoriesDropdown.set(false); }
+  // ── Categories Dropdown ────────────────────────────────────────────────────
+  openCategoriesDropdown():  void { this.showCategoriesDropdown.set(true); }
+  closeCategoriesDropdown(): void { this.showCategoriesDropdown.set(false); }
+
  
-  signOut() {
-    this.authService.signOut()
-    this.closeUserDropdown(); this.closeMobileMenu();
+  // ── User Actions ───────────────────────────────────────────────────────────
+  signOut(): void {
+    this.authService.signOut(); // clears token + userData + navigates to /
+    this.closeUserDropdown();
+    this.closeMobileMenu();
   }
-  navigateToProfile()    { console.log('profile');      this.closeUserDropdown(); }
-  navigateToOrders()     { console.log('orders');       this.closeUserDropdown(); }
-  navigateToWishlist()   { console.log('wishlist');     this.closeUserDropdown(); }
-  navigateToAddresses()  { console.log('addresses');    this.closeUserDropdown(); }
-  navigateToSettings()   { console.log('settings');     this.closeUserDropdown(); }
+
+    // TODO: replace with router.navigate() when pages are built
+    navigateToProfile():   void { this.closeUserDropdown(); }
+    navigateToOrders():    void { this.closeUserDropdown(); }
+    navigateToWishlist():  void { this.closeUserDropdown(); }
+    navigateToAddresses(): void { this.closeUserDropdown(); }
+    navigateToSettings():  void { this.closeUserDropdown(); }
+  
 }

@@ -10,12 +10,16 @@ import { Router } from '@angular/router';
 export class AuthService {
   private readonly httpClient = inject(HttpClient)
   private readonly router = inject(Router)
-  isLogged = signal<boolean>(false)
-  userData  = signal<{ name: string; email: string }>({ name: '', email: '' });
-  email = signal('')
 
-  // Decode JWT payload (base64) to extract user name & email
-  // Called after login and on navbar init (page refresh)
+  // ── Auth state signals ─────────────────────────────────────────────────────
+  isLogged = signal<boolean>(false);
+  userData = signal<{ name: string; email: string }>({ name: '', email: '' });
+  email    = signal<string>('');
+
+  // ── Token helpers ──────────────────────────────────────────────────────────
+
+  // Decode JWT payload → extract name & email, store in userData signal
+  // Called after login + on every page refresh (navbar ngOnInit)
   setUserFromToken(): void {
     const token = localStorage.getItem('freshToken');
     if (!token) return;
@@ -23,19 +27,25 @@ export class AuthService {
       const payload = JSON.parse(atob(token.split('.')[1]));
       this.userData.set({
         name:  payload.name  ?? '',
-        email: this.email() ,
+        email: this.email(), // email comes from localStorage (not always in JWT)
       });
     } catch {
       this.userData.set({ name: '', email: '' });
     }
   }
+ 
 
-  signOut():void
-  {
-    localStorage.removeItem('freshToken')
-    this.isLogged.set(false)
-    this.router.navigate(['/'])
+  // ── Auth actions ───────────────────────────────────────────────────────────
+  signOut(): void {
+    localStorage.removeItem('freshToken');
+    localStorage.removeItem('email');
+    this.isLogged.set(false);
+    this.userData.set({ name: '', email: '' }); // ✅ clear navbar display immediately
+    this.email.set('');
+    this.router.navigate(['/']);
   }
+  
+  // ── API calls ──────────────────────────────────────────────────────────────
 
   signIn(data:object):Observable<any>{
     return this.httpClient.post(`${environment.baseUrl}/api/v1/auth/signin`,data)

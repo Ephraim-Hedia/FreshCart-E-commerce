@@ -1,7 +1,8 @@
-import { CommonModule } from '@angular/common';
-import { Component, HostListener, signal } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, computed, HostListener, inject, OnInit, PLATFORM_ID, Signal, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../core/auth/services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -9,17 +10,33 @@ import { RouterModule } from '@angular/router';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
+  private readonly authService = inject(AuthService)
+  private readonly pLATFORM_ID = inject(PLATFORM_ID)
+
+  ngOnInit(): void {
+    if(isPlatformBrowser(this.pLATFORM_ID))
+    {
+      if(localStorage.getItem('freshToken'))
+      {
+        this.authService.isLogged.set(true)
+      }
+    }
+  }
+
+  isLoggedIn = computed(()=>{
+    return this.authService.isLogged()
+  })
+  
   isSticky = signal(false);
   showTopStrip = signal(true);
   isMobileMenuOpen = signal(false);
   searchQuery = '';
   cartItemsCount = signal(3);
   wishlistItemsCount = signal(5);
-  isLoggedIn = signal(true);
   showUserDropdown = signal(false);
   showCategoriesDropdown = signal(false);
- 
+  
   userData = signal({ name: 'sdf', email: 'sdf@gmail.com' });
  
   categories = [
@@ -60,12 +77,13 @@ export class NavbarComponent {
   openCategoriesDropdown()  { this.showCategoriesDropdown.set(true); }
   closeCategoriesDropdown() { this.showCategoriesDropdown.set(false); }
  
-  signOut()              { console.log('sign out');     this.closeUserDropdown(); this.closeMobileMenu(); }
+  signOut() {
+    this.authService.signOut()
+    this.closeUserDropdown(); this.closeMobileMenu();
+  }
   navigateToProfile()    { console.log('profile');      this.closeUserDropdown(); }
   navigateToOrders()     { console.log('orders');       this.closeUserDropdown(); }
   navigateToWishlist()   { console.log('wishlist');     this.closeUserDropdown(); }
   navigateToAddresses()  { console.log('addresses');    this.closeUserDropdown(); }
   navigateToSettings()   { console.log('settings');     this.closeUserDropdown(); }
-
-  
 }

@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { FormInputComponent } from '../../shared/ui/form-input/form-input.component';
 import { SocialAuthButtonsComponent } from '../../shared/ui/social-auth-buttons/social-auth-buttons.component';
+import { AuthService } from '../../core/auth/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -11,12 +12,15 @@ import { SocialAuthButtonsComponent } from '../../shared/ui/social-auth-buttons/
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
+  private readonly fb          = inject(FormBuilder);
+  private readonly router      = inject(Router);
+  private readonly authService = inject(AuthService);
 
-  private readonly fb     = inject(FormBuilder);
-  private readonly router = inject(Router);
-
+  // Only controls button state
+  // Spinner  → handled globally by loadingInterceptor (NgxSpinner)
+  // Errors   → handled globally by errorInterceptor  (ngx-toastr) 
   isLoading = signal(false);
-  errorMsg  = signal('');
+
 
   loginForm = this.fb.group({
     email:       ['', [Validators.required, Validators.email]],
@@ -34,19 +38,18 @@ export class LoginComponent {
     }
 
     this.isLoading.set(true);
-    this.errorMsg.set('');
 
     const { email, password } = this.loginForm.value;
-    console.log('Login:', { email, password });
 
-    // TODO: inject AuthService and call login()
-    // this.authService.login({ email, password }).subscribe({
-    //   next: () => this.router.navigate(['/']),
-    //   error: (err) => {
-    //     this.errorMsg.set(err.error?.message || 'Login failed. Please try again.');
-    //     this.isLoading.set(false);
-    //   }
-    // });
+    this.authService.signIn({ email, password }).subscribe({
+      next: (res) => {
+        // headerInterceptor will attach this token to every subsequent request
+        localStorage.setItem('freshToken', res.token); 
+        this.router.navigate(['/']);
+        this.authService.isLogged.set(true)
+      },
+      error: () => this.isLoading.set(false) // toastr already shown by interceptor
+    });
 
     // Simulate for now
     setTimeout(() => this.isLoading.set(false), 1000);

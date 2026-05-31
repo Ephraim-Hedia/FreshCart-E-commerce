@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/auth/guards/auth-guard';
+import { visitorGuard } from './core/auth/guards/visitor-guard';
 
 export const routes: Routes = [
   {
@@ -24,37 +26,44 @@ export const routes: Routes = [
   {
     path: "wishlist",
     loadComponent: () => import('./features/wishlist/wishlist.component').then(m => m.WishlistComponent),
-    title: "Wishlist Page"
+    title: "Wishlist Page",
+    canActivate:[authGuard]
   },
   {
     path: "checkout",
     loadComponent: () => import('./features/checkout/checkout.component').then(m => m.CheckoutComponent),
-    title: "Checkout Page"
+    title: "Checkout Page",
+    canActivate:[authGuard]
   },
   {
     path: "forget-password",
     loadComponent: () => import('./features/forget-password/forget-password.component').then(m => m.ForgetPasswordComponent),
-    title: "Forget Password Page"
+    title: "Forget Password Page",
+    canActivate:[visitorGuard]
   },
   {
     path: "login",
     loadComponent: () => import('./features/login/login.component').then(m => m.LoginComponent),
-    title: "Login Page"
+    title: "Login Page",
+    canActivate:[visitorGuard]
   },
   {
     path: "register",
     loadComponent: () => import('./features/register/register.component').then(m => m.RegisterComponent),
-    title: "Register Page"
+    title: "Register Page",
+    canActivate:[visitorGuard]
   },
   {
     path: "cart",
     loadComponent: () => import('./features/cart/cart.component').then(m => m.CartComponent),
-    title: "Cart Page"
+    title: "Cart Page",
+    canActivate:[authGuard]
   },
   {
     path: "orders",
     loadComponent: () => import('./features/orders/orders.component').then(m => m.OrdersComponent),
-    title: "Orders Page"
+    title: "Orders Page",
+    canActivate:[authGuard]
   },
   {
     path: "**",

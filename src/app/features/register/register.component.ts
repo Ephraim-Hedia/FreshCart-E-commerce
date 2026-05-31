@@ -3,6 +3,8 @@ import { ValidatorFn, AbstractControl, ValidationErrors, ReactiveFormsModule, Fo
 import { Router, RouterModule } from '@angular/router';
 import { FormInputComponent } from '../../shared/ui/form-input/form-input.component';
 import { SocialAuthButtonsComponent } from '../../shared/ui/social-auth-buttons/social-auth-buttons.component';
+import { AuthService } from '../../core/auth/services/auth.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 
 // Custom validator: confirm password must match password
@@ -25,16 +27,20 @@ export function passwordMatchValidator(): ValidatorFn {
   styleUrl: './register.component.css',
 })
 export class RegisterComponent {
-  private readonly fb     = inject(FormBuilder);
-  private readonly router = inject(Router);
+  private readonly fb          = inject(FormBuilder);
+  private readonly router      = inject(Router);
+  private readonly authService = inject(AuthService);
 
+  // Only controls button state
+  // Spinner  → handled globally by loadingInterceptor (NgxSpinner)
+  // Errors   → handled globally by errorInterceptor  (ngx-toastr)
   isLoading = signal(false);
-  errorMsg  = signal('');
+
 
   registerForm = this.fb.group({
     name:            ['', [Validators.required, Validators.minLength(3)]],
     email:           ['', [Validators.required, Validators.email]],
-    password:        ['', [Validators.required, Validators.minLength(8), Validators.pattern(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)],],
+    password:        ['', [Validators.required, Validators.minLength(8), Validators.pattern(/^(?=.*[0-9])(?=.*[!@#$%^&*])/)]],
     confirmPassword: ['', [Validators.required]],
     phone:           ['', [Validators.required, Validators.pattern(/^[0-9+\s\-]{7,15}$/)]],
     terms:           [false, [Validators.requiredTrue]],
@@ -46,14 +52,18 @@ export class RegisterComponent {
   get confirmPasswordCtrl() { return this.registerForm.controls.confirmPassword; }
   get phoneCtrl()           { return this.registerForm.controls.phone; }
 
+
+    // ✅ Convert valueChanges observable → signal so computed() reacts to every keystroke
+    private passwordValue = toSignal(this.passwordCtrl.valueChanges, { initialValue: '' });
+
   // Password strength: 0 = empty, 1 = weak, 2 = medium, 3 = strong
   passwordStrength = computed(() => {
-    const val = this.passwordCtrl.value ?? '';
+    const val = this.passwordValue() ?? '';
     if (!val) return 0;
     let score = 0;
-    if (val.length >= 8)  score++;
-    if (/[0-9]/.test(val)) score++;
-    if (/[!@#$%^&*]/.test(val)) score++;
+    if (val.length >= 8)         score++;
+    if (/[0-9]/.test(val))       score++;
+    if (/[!@#$%^&*]/.test(val))  score++;
     return score;
   });
 
@@ -94,24 +104,22 @@ export class RegisterComponent {
     }
 
     this.isLoading.set(true);
-    this.errorMsg.set('');
 
-    const { name, email, password, phone } = this.registerForm.value;
-    console.log('Register:', { name, email, password, phone });
+    const { name, email, password, confirmPassword, phone } = this.registerForm.value;
 
-    // TODO: inject AuthService and call register()
-    // this.authService.register({ name, email, password, phone }).subscribe({
-    //   next: () => this.router.navigate(['/login']),
-    //   error: (err) => {
-    //     this.errorMsg.set(err.error?.message || 'Registration failed. Please try again.');
-    //     this.isLoading.set(false);
-    //   }
-    // });
-
-    // Simulate for now
-    setTimeout(() => this.isLoading.set(false), 1000);
+    // API expects rePassword (not confirmPassword)
+    this.authService.signUp({
+      name, email, password,
+      rePassword: confirmPassword, // API expects 'rePassword' not 'confirmPassword'
+      phone
+    }).subscribe({
+      next: () => this.router.navigate(['/login']),
+      error: () =>
+        // toastr error already shown by errorInterceptor — just reset button
+        this.isLoading.set(false)
+    });
   }
 
-  onGoogleLogin():   void { console.log('Google register'); }
-  onFacebookLogin(): void { console.log('Facebook register'); }
+  onGoogleLogin():   void { console.log('Google register - not implemented yet'); }
+  onFacebookLogin(): void { console.log('Facebook register - not implemented yet'); }
 }

@@ -18,11 +18,10 @@ export class WishlistService {
   }
 
   removeProductFromWishlist(productId:string):Observable<any>{
-    return this.httpClient.delete(`${environment.baseUrl}/api/v1/wishlist/${{productId}}`)
+    return this.httpClient.delete(`${environment.baseUrl}/api/v1/wishlist/${productId}`)
   }
 
   getLoggedUserWishlist():Observable<any>{
-    return this.httpClient.get(`${environment.baseUrl}/api/v1/wishlist`,{headers:{'token':''}})
+    return this.httpClient.get(`${environment.baseUrl}/api/v1/wishlist`)
   }
-  
 }

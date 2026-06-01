@@ -72,7 +72,7 @@ export class CheckoutComponent implements OnInit {
         next: () => {
           this.cartService.cartCount.set(0);
           this.cartService.cartId.set(null);
-          this.router.navigate(['/orders']);
+          this.router.navigate(['/allorders']);
         },
         error: () => this.isPlacingOrder.set(false),
       });

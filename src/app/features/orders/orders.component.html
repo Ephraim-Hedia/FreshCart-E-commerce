@@ -1,8 +1,15 @@
 <div class="min-h-screen bg-gray-50">
     <div class="container mx-auto px-4 py-8">
   
+      <!-- Breadcrumb -->
+      <nav class="text-sm text-gray-500 mb-4 flex items-center gap-2">
+        <a routerLink="/" class="hover:text-primary">Home</a>
+        <span>/</span>
+        <span class="text-gray-900 font-medium">My Orders</span>
+      </nav>
+  
       <!-- Page Header -->
-      <div class="flex items-center justify-between mb-8">
+      <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-4">
           <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center shrink-0">
             <i class="fa-solid fa-bag-shopping text-white text-xl"></i>
@@ -10,16 +17,13 @@
           <div>
             <h1 class="text-2xl font-bold text-gray-900">My Orders</h1>
             @if (!isLoading()) {
-              <p class="text-sm text-gray-500 mt-0.5">
-                Track and manage your {{ orders().length }} orders
+              <p class="text-sm text-gray-500">
+                Track and manage your {{ orders().length }} {{ orders().length === 1 ? 'order' : 'orders' }}
               </p>
             }
           </div>
         </div>
-        <a
-          routerLink="/shop"
-          class="hidden sm:flex items-center gap-1.5 text-sm text-primary font-medium hover:underline"
-        >
+        <a routerLink="/shop" class="flex items-center gap-1.5 text-sm text-primary font-medium hover:underline">
           <i class="fa-solid fa-store text-xs"></i>
           Continue Shopping
         </a>
@@ -40,10 +44,8 @@
           </div>
           <h2 class="text-xl font-bold text-gray-900">No orders yet</h2>
           <p class="text-gray-500 text-sm">When you place orders, they'll appear here.</p>
-          <a
-            routerLink="/shop"
-            class="mt-2 px-6 py-3 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-colors"
-          >
+          <a routerLink="/shop"
+            class="mt-2 px-6 py-3 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-colors">
             Start Shopping
           </a>
         </div>
@@ -54,161 +56,188 @@
         <div class="flex flex-col gap-4">
   
           @for (order of orders(); track order._id) {
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-gray-200 transition-all duration-300 overflow-hidden">
   
-              <!-- ── Order Header (always visible) ── -->
-              <div class="p-5">
-                <div class="flex items-start gap-4">
+              <!-- ── Collapsed Header ── -->
+              <div class="p-5 sm:p-6">
+                <div class="flex gap-5">
   
-                  <!-- Product thumbnails (stacked) -->
-                  <div class="relative shrink-0 w-14 h-14">
-                    @for (item of order.cartItems.slice(0, 3); track item._id; let i = $index) {
+                  <!-- Product image + count badge -->
+                  <div class="relative shrink-0">
+                    <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-gradient-to-br from-gray-50 to-white border border-gray-100 p-2.5 overflow-hidden">
                       <img
-                        [src]="item.product.imageCover"
-                        [alt]="item.product.title"
-                        class="absolute w-10 h-10 rounded-xl object-cover border-2 border-white bg-gray-50"
-                        [style.left.px]="i * 8"
-                        [style.top.px]="i * 8"
-                        [style.z-index]="3 - i"
+                        [src]="order.cartItems[0]?.product?.imageCover"
+                        [alt]="order.cartItems[0]?.product?.title"
+                        class="w-full h-full object-contain"
                       >
-                    }
+                    </div>
                     @if (order.cartItems.length > 1) {
-                      <span class="absolute -top-1 -right-1 w-5 h-5 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center z-10">
-                        {{ order.cartItems.length }}
-                      </span>
+                      <div class="absolute -top-2 -right-2 w-7 h-7 bg-gray-900 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-lg">
+                        +{{ order.cartItems.length - 1 }}
+                      </div>
                     }
                   </div>
   
                   <!-- Order Info -->
                   <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-2 mb-1 flex-wrap">
-                      <!-- Status badge -->
-                      <span
-                        class="text-xs font-semibold px-2.5 py-0.5 rounded-full"
-                        [class]="getStatusClasses(order)"
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                      <div>
+  
+                        <!-- Status badge -->
+                        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg mb-2"
+                          [class.bg-blue-100]="!order.isDelivered && order.isPaid"
+                          [class.bg-orange-100]="!order.isPaid && !order.isDelivered"
+                          [class.bg-green-100]="order.isDelivered"
+                        >
+                          <i class="fa-solid text-xs"
+                            [class.fa-truck]="!order.isDelivered"
+                            [class.fa-circle-check]="order.isDelivered"
+                            [class.text-blue-600]="!order.isDelivered && order.isPaid"
+                            [class.text-orange-600]="!order.isPaid && !order.isDelivered"
+                            [class.text-green-600]="order.isDelivered"
+                          ></i>
+                          <span class="text-xs font-semibold"
+                            [class.text-blue-600]="!order.isDelivered && order.isPaid"
+                            [class.text-orange-600]="!order.isPaid && !order.isDelivered"
+                            [class.text-green-600]="order.isDelivered"
+                          >{{ getStatusLabel(order) }}</span>
+                        </div>
+  
+                        <!-- Order ID -->
+                        <h3 class="font-bold text-gray-900 text-lg flex items-center gap-1.5">
+                          <i class="fa-solid fa-hashtag text-xs text-gray-400"></i>
+                          {{ order.id }}
+                        </h3>
+                      </div>
+  
+                      <!-- Payment method icon -->
+                      <div class="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
+                        [class.bg-purple-100]="order.paymentMethodType === 'card'"
+                        [class.bg-gray-100]="order.paymentMethodType === 'cash'"
                       >
-                        {{ getStatusLabel(order) }}
+                        <i class="fa-solid"
+                          [class.fa-credit-card]="order.paymentMethodType === 'card'"
+                          [class.fa-money-bill-wave]="order.paymentMethodType === 'cash'"
+                          [class.text-purple-600]="order.paymentMethodType === 'card'"
+                          [class.text-gray-500]="order.paymentMethodType === 'cash'"
+                        ></i>
+                      </div>
+                    </div>
+  
+                    <!-- Meta info row -->
+                    <div class="flex flex-wrap items-center gap-3 text-sm text-gray-500 mb-4">
+                      <span class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-calendar-days text-xs text-gray-400"></i>
+                        {{ formatDate(order.createdAt) }}
+                      </span>
+                      <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+                      <span class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-box text-xs text-gray-400"></i>
+                        {{ getTotalItems(order) }} items
+                      </span>
+                      <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+                      <span class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-location-dot text-xs text-gray-400"></i>
+                        {{ order.shippingAddress.city }}
                       </span>
                     </div>
   
-                    <div class="flex items-center gap-1.5 text-xs text-gray-500 flex-wrap gap-y-1">
-                      <span class="font-semibold text-gray-900 text-sm"># {{ order.id }}</span>
-                      <span class="text-gray-300">·</span>
-                      <i class="fa-regular fa-calendar text-xs"></i>
-                      <span>{{ formatDate(order.createdAt) }}</span>
-                      <span class="text-gray-300">·</span>
-                      <i class="fa-solid fa-box text-xs"></i>
-                      <span>{{ getTotalItems(order) }} {{ getTotalItems(order) === 1 ? 'Item' : 'Items' }}</span>
-                      <span class="text-gray-300">·</span>
-                      <i class="fa-solid fa-location-dot text-xs"></i>
-                      <span>{{ order.shippingAddress.city }}</span>
+                    <!-- Price + Details button -->
+                    <div class="flex items-center justify-between gap-4">
+                      <div>
+                        <span class="text-2xl font-bold text-gray-900">{{ order.totalOrderPrice }}</span>
+                        <span class="text-sm font-medium text-gray-400 ml-1">EGP</span>
+                      </div>
+  
+                      <button
+                        type="button"
+                        (click)="toggleOrder(order._id)"
+                        class="cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                        [class.bg-primary]="isExpanded(order._id)"
+                        [class.text-white]="isExpanded(order._id)"
+                        [class.bg-gray-100]="!isExpanded(order._id)"
+                        [class.text-gray-700]="!isExpanded(order._id)"
+                        [class.hover:bg-green-700]="isExpanded(order._id)"
+                        [class.hover:bg-gray-200]="!isExpanded(order._id)"
+                      >
+                        @if (isExpanded(order._id)) {
+                          Hide <i class="fa-solid fa-chevron-up text-xs"></i>
+                        } @else {
+                          Details <i class="fa-solid fa-chevron-down text-xs"></i>
+                        }
+                      </button>
                     </div>
   
-                    <p class="font-bold text-gray-900 mt-2">
-                      {{ order.totalOrderPrice }}
-                      <span class="text-xs font-normal text-gray-400">EGP</span>
-                    </p>
                   </div>
-  
-                  <!-- Payment type icon + Toggle button -->
-                  <div class="flex flex-col items-end gap-2 shrink-0">
-                    <div class="w-8 h-8 rounded-lg flex items-center justify-center"
-                      [class.bg-blue-50]="order.paymentMethodType === 'card'"
-                      [class.bg-gray-100]="order.paymentMethodType === 'cash'"
-                    >
-                      <i class="text-sm"
-                        [class.fa-solid]="true"
-                        [class.fa-credit-card]="order.paymentMethodType === 'card'"
-                        [class.fa-money-bill-wave]="order.paymentMethodType === 'cash'"
-                        [class.text-blue-500]="order.paymentMethodType === 'card'"
-                        [class.text-gray-500]="order.paymentMethodType === 'cash'"
-                      ></i>
-                    </div>
-  
-                    <button
-                      type="button"
-                      (click)="toggleOrder(order._id)"
-                      class="cursor-pointer flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-primary transition-colors px-3 py-1.5 border border-gray-200 hover:border-primary rounded-lg"
-                    >
-                      @if (isExpanded(order._id)) {
-                        Hide <i class="fa-solid fa-chevron-up text-[10px]"></i>
-                      } @else {
-                        Details <i class="fa-solid fa-chevron-down text-[10px]"></i>
-                      }
-                    </button>
-                  </div>
-  
                 </div>
               </div>
   
               <!-- ── Expanded Details ── -->
               @if (isExpanded(order._id)) {
-                <div class="border-t border-gray-100 p-5 flex flex-col gap-5">
+                <div class="border-t border-gray-100">
   
                   <!-- Order Items -->
-                  <div>
-                    <h3 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  <div class="p-5 sm:p-6">
+                    <h3 class="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
                       <div class="w-1 h-4 bg-primary rounded-full"></div>
                       Order Items
                     </h3>
-                    <div class="flex flex-col gap-3">
+                    <div class="flex flex-col divide-y divide-gray-50">
                       @for (item of order.cartItems; track item._id) {
-                        <div class="flex items-center gap-3">
-                          <img
-                            [src]="item.product.imageCover"
-                            [alt]="item.product.title"
-                            class="w-14 h-14 object-contain rounded-xl border border-gray-100 bg-gray-50 shrink-0 p-1"
-                          >
-                          <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-900 truncate">{{ item.product.title }}</p>
-                            <p class="text-xs text-gray-400 mt-0.5">
-                              {{ item.count }} × {{ item.price }} EGP
-                            </p>
+                        <div class="flex items-center gap-4 py-3 first:pt-0 last:pb-0">
+                          <div class="w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 overflow-hidden shrink-0 p-1">
+                            <img
+                              [src]="item.product.imageCover"
+                              [alt]="item.product.title"
+                              class="w-full h-full object-contain"
+                            >
                           </div>
-                          <p class="text-sm font-bold text-gray-900 shrink-0">
-                            {{ item.count * item.price }}
-                            <span class="text-xs font-normal text-gray-400">EGP</span>
-                          </p>
+                          <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold text-gray-900 truncate">{{ item.product.title }}</p>
+                            <p class="text-xs text-gray-400 mt-0.5">{{ item.count }} × {{ item.price }} EGP</p>
+                          </div>
+                          <div class="text-right shrink-0">
+                            <span class="text-base font-bold text-gray-900">{{ item.count * item.price }}</span>
+                            <span class="text-xs text-gray-400 ml-1">EGP</span>
+                          </div>
                         </div>
                       }
                     </div>
                   </div>
   
-                  <!-- Bottom grid: Address + Order Summary -->
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <!-- Delivery Address + Order Summary -->
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-4 px-5 sm:px-6 pb-5 sm:pb-6">
   
                     <!-- Delivery Address -->
-                    <div class="p-4 border border-gray-100 rounded-xl">
+                    <div class="p-4 border border-gray-100 rounded-xl mb-4 md:mb-0">
                       <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                        <i class="fa-solid fa-location-dot text-primary"></i>
+                        <i class="fa-solid fa-location-dot text-primary text-sm"></i>
                         Delivery Address
                       </h4>
-                      <p class="text-sm font-semibold text-gray-900">{{ order.shippingAddress.city }}</p>
+                      <p class="text-sm font-bold text-gray-900">{{ order.shippingAddress.city }}</p>
                       <p class="text-sm text-gray-600 mt-1">{{ order.shippingAddress.details }}</p>
-                      <p class="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                      <p class="text-xs text-gray-400 mt-2 flex items-center gap-1.5">
                         <i class="fa-solid fa-phone text-xs"></i>
                         {{ order.shippingAddress.phone }}
                       </p>
                     </div>
   
-                    <!-- Order Summary -->
-                    <div class="p-4 bg-amber-50 border border-amber-100 rounded-xl">
-                      <h4 class="text-xs font-semibold text-amber-700 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                        <i class="fa-solid fa-receipt text-amber-500"></i>
+                    <!-- Order Summary — light blue card -->
+                    <div class="p-4 bg-blue-50 border border-blue-100 rounded-xl">
+                      <h4 class="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                        <i class="fa-solid fa-receipt text-blue-500 text-sm"></i>
                         Order Summary
                       </h4>
                       <div class="flex flex-col gap-2">
                         <div class="flex justify-between text-sm">
                           <span class="text-gray-600">Subtotal</span>
-                          <span class="font-medium text-gray-900">{{ order.totalOrderPrice }} EGP</span>
+                          <span class="text-gray-900">{{ order.totalOrderPrice }} EGP</span>
                         </div>
                         <div class="flex justify-between text-sm">
                           <span class="text-gray-600">Shipping</span>
-                          <span class="font-medium text-gray-600">
-                            {{ order.shippingPrice === 0 ? 'Free' : order.shippingPrice + ' EGP' }}
-                          </span>
+                          <span class="text-gray-600">{{ order.shippingPrice === 0 ? 'Free' : order.shippingPrice + ' EGP' }}</span>
                         </div>
-                        <div class="flex justify-between font-bold border-t border-amber-200 pt-2 mt-1">
+                        <div class="flex justify-between font-bold border-t border-blue-200 pt-2 mt-1">
                           <span class="text-gray-900">Total</span>
                           <span class="text-gray-900">{{ order.totalOrderPrice }} EGP</span>
                         </div>

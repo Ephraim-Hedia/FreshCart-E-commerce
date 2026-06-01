@@ -24,10 +24,10 @@
         </nav>
   
         <!-- ══════════════ MAIN PRODUCT SECTION ══════════════ -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-10 mb-12">
   
           <!-- LEFT: Image Gallery -->
-          <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-4 lg:col-span-2">
             <!-- Main Image -->
             <div class="w-full aspect-square rounded-2xl border border-gray-100 bg-gray-50 overflow-hidden flex items-center justify-center p-6">
               <img
@@ -68,7 +68,7 @@
           </div>
   
           <!-- RIGHT: Product Info -->
-          <div class="flex flex-col gap-5">
+          <div class="flex flex-col gap-5 lg:col-span-3">
   
             <!-- Category + Brand badges -->
             <div class="flex items-center gap-2 flex-wrap">
@@ -182,16 +182,25 @@
             <div class="flex gap-3">
               <button
                 type="button"
-                (click)="addToWishlist()"
-                [disabled]="isAddingToWishlist()"
-                class="cursor-pointer flex-1 flex items-center justify-center gap-2 py-2.5 border border-gray-200 hover:border-primary hover:text-primary text-gray-600 text-sm font-medium rounded-xl transition-colors disabled:opacity-50"
+                (click)="toggleWishlist()"
+                [disabled]="isWishlistLoading()"
+                class="cursor-pointer flex-1 flex items-center justify-center gap-2 py-2.5 border text-sm font-medium rounded-xl transition-all duration-200 disabled:opacity-50"
+                [class.border-red-300]="isWishlisted()"
+                [class.text-red-500]="isWishlisted()"
+                [class.bg-red-50]="isWishlisted()"
+                [class.border-gray-200]="!isWishlisted()"
+                [class.text-gray-600]="!isWishlisted()"
+                [class.hover:border-primary]="!isWishlisted()"
+                [class.hover:text-primary]="!isWishlisted()"
               >
-                @if (isAddingToWishlist()) {
+                @if (isWishlistLoading()) {
                   <i class="fa-solid fa-spinner fa-spin text-xs"></i>
+                } @else if (isWishlisted()) {
+                  <i class="fa-solid fa-heart text-sm text-red-500"></i>
                 } @else {
                   <i class="fa-regular fa-heart text-sm"></i>
                 }
-                Add to Wishlist
+                {{ isWishlisted() ? 'Wishlisted' : 'Add to Wishlist' }}
               </button>
               <button
                 type="button"
@@ -280,9 +289,9 @@
   
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Product Information -->
-                <div class="border border-gray-100 rounded-xl p-5">
+                <div class="border border-gray-100 rounded-xl p-5 shadow-xl">
                   <h4 class="font-semibold text-gray-900 mb-4">Product Information</h4>
-                  <div class="flex flex-col gap-3">
+                  <div class="flex flex-col gap-2">
                     <div class="flex justify-between text-sm">
                       <span class="text-gray-500">Category</span>
                       <span class="font-medium text-gray-900">{{ product()!.category.name }}</span>
@@ -306,7 +315,7 @@
                 </div>
   
                 <!-- Key Features -->
-                <div class="border border-gray-100 rounded-xl p-5">
+                <div class="border border-gray-100 rounded-xl p-5 shadow-xl">
                   <h4 class="font-semibold text-gray-900 mb-4">Key Features</h4>
                   <div class="flex flex-col gap-3">
                     @for (feature of ['Premium Quality Product', '100% Authentic Guarantee', 'Fast & Secure Packaging', 'Quality Tested']; track feature) {

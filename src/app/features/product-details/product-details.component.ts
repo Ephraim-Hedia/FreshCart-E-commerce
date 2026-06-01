@@ -19,15 +19,17 @@ export class ProductDetailsComponent implements OnInit {
   private readonly cartService    = inject(CartService);
   private readonly wishlistService = inject(WishlistService);
 
+
   // ── State ──────────────────────────────────────────────────────────────────
-  product        = signal<Product | null>(null);
+  product         = signal<Product | null>(null);
   relatedProducts = signal<Product[]>([]);
-  isLoading      = signal(true);
-  isAddingToCart = signal(false);
-  isAddingToWishlist = signal(false);
-  selectedImage  = signal<string>('');
-  quantity       = signal(1);
-  activeTab      = signal<'details' | 'reviews' | 'shipping'>('details');
+  isLoading       = signal(true);
+  isAddingToCart  = signal(false);
+  isWishlistLoading = signal(false);
+  selectedImage   = signal<string>('');
+  quantity        = signal(1);
+  activeTab       = signal<'details' | 'reviews' | 'shipping'>('details');
+
 
   // ── Computed ───────────────────────────────────────────────────────────────
   totalPrice = computed(() => {
@@ -48,6 +50,12 @@ export class ProductDetailsComponent implements OnInit {
     return p.priceAfterDiscount ?? p.price;
   });
 
+    // ✅ Reactive — updates automatically when wishlistIds signal changes
+    isWishlisted = computed(() => {
+      const id = this.product()?._id;
+      return id ? this.wishlistService.isInWishlist(id) : false;
+    });
+  
   stars = computed(() => {
     const avg = this.product()?.ratingsAverage ?? 0;
     return Array.from({ length: 5 }, (_, i) => {
@@ -85,7 +93,7 @@ export class ProductDetailsComponent implements OnInit {
       next: (res) => {
         const related = res.data
           .filter(p => p.category._id === categoryId && p._id !== this.product()?._id)
-          .slice(0, 10);
+          .slice(0, 5);
         this.relatedProducts.set(related);
       },
     });
@@ -117,16 +125,26 @@ export class ProductDetailsComponent implements OnInit {
     });
   }
 
-  // ── Add to wishlist ───────────────────────────────────────────────────────
-  addToWishlist(): void {
+  // ── Wishlist toggle ────────────────────────────────────────────────────────
+  // If already in wishlist → remove. Otherwise → add.
+  toggleWishlist(): void {
     const id = this.product()?._id;
     if (!id) return;
-    this.isAddingToWishlist.set(true);
-    this.wishlistService.addProductToWishlist(id).subscribe({
-      next: () => this.isAddingToWishlist.set(false),
-      error: () => this.isAddingToWishlist.set(false),
-    });
+    this.isWishlistLoading.set(true);
+ 
+    if (this.isWishlisted()) {
+      this.wishlistService.removeProductFromWishlist(id).subscribe({
+        next:  () => this.isWishlistLoading.set(false),
+        error: () => this.isWishlistLoading.set(false),
+      });
+    } else {
+      this.wishlistService.addProductToWishlist(id).subscribe({
+        next:  () => this.isWishlistLoading.set(false),
+        error: () => this.isWishlistLoading.set(false),
+      });
+    }
   }
+
 
   // ── Related product cart ──────────────────────────────────────────────────
   addRelatedToCart(productId: string): void {

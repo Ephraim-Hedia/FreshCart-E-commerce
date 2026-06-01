@@ -75,6 +75,9 @@ export class ShopComponent implements OnInit {
       if (params['category']) {
         this.selectedCategories.set([params['category']]);
       }
+      if (params['brand']) {
+        this.selectedBrands.set([params['brand']]);
+      }
       this.loadProducts(1);
     });
   }

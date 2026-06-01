@@ -1,1 +1,56 @@
-<p>brands works!</p>
+<!-- Page Header -->
+<app-page-header
+  title="Top Brands"
+  icon="fa-tags"
+  breadcrumbLabel="Brands"
+  subtitle="Shop from your favorite brands"
+  gradient="purple"
+/>
+
+<div class="min-h-screen bg-gray-50">
+  <div class="container mx-auto px-4 py-10">
+
+    <!-- Loading -->
+    @if (isLoading()) {
+      <div class="flex items-center justify-center py-24">
+        <i class="fa-solid fa-spinner fa-spin text-primary text-3xl"></i>
+      </div>
+    }
+
+    <!-- Empty -->
+    @else if (brands().length === 0) {
+      <div class="flex flex-col items-center justify-center py-24 gap-4">
+        <i class="fa-solid fa-tags text-gray-200 text-6xl"></i>
+        <p class="text-gray-500 text-sm">No brands found.</p>
+      </div>
+    }
+
+    <!-- Brands Grid -->
+    @else {
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
+        @for (brand of brands(); track brand._id) {
+          <a
+            [routerLink]="['/shop']"
+            [queryParams]="{ brand: brand._id }"
+            class="group block bg-white rounded-2xl p-5 hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-purple-200"
+          >
+            <!-- Brand Image -->
+            <div class="aspect-square mb-3 overflow-hidden rounded-xl bg-gray-50 flex items-center justify-center p-3">
+              <img
+                [src]="brand.image"
+                [alt]="brand.name"
+                class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+              >
+            </div>
+
+            <!-- Brand Name -->
+            <h3 class="text-center text-sm font-semibold text-gray-900 group-hover:text-purple-600 transition-colors truncate">
+              {{ brand.name }}
+            </h3>
+          </a>
+        }
+      </div>
+    }
+
+  </div>
+</div>

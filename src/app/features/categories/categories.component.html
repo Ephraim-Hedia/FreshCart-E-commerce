@@ -1,1 +1,38 @@
-<p>categories works!</p>
+<!-- Page Header -->
+<app-page-header
+  title="All Categories"
+  icon="fa-layer-group"
+  breadcrumbLabel="Categories"
+  subtitle="Browse our wide range of product categories"
+  gradient="green"
+/>
+
+<div class="min-h-screen bg-gray-50">
+  <div class="container mx-auto px-4 py-10">
+
+    <!-- Loading -->
+    @if (isLoading()) {
+      <div class="flex items-center justify-center py-24">
+        <i class="fa-solid fa-spinner fa-spin text-primary text-3xl"></i>
+      </div>
+    }
+
+    <!-- Empty -->
+    @else if (categories().length === 0) {
+      <div class="flex flex-col items-center justify-center py-24 gap-4">
+        <i class="fa-solid fa-layer-group text-gray-200 text-6xl"></i>
+        <p class="text-gray-500 text-sm">No categories found.</p>
+      </div>
+    }
+
+    <!-- Categories Grid -->
+    @else {
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
+        @for (category of categories(); track category._id) {
+          <app-category-card [category]="category" />
+        }
+      </div>
+    }
+
+  </div>
+</div>

@@ -1,5 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ProductsService, ProductsQueryParams } from '../../core/services/products.service';
 import { CategoryService } from '../../core/services/category.service';
@@ -24,6 +24,7 @@ interface Brand {
   styleUrl: './shop.component.css',
 })
 export class ShopComponent implements OnInit {
+  private readonly route            = inject(ActivatedRoute);
   private readonly productsService  = inject(ProductsService);
   private readonly categoryService  = inject(CategoryService);
   private readonly brandService     = inject(BrandService);
@@ -69,7 +70,13 @@ export class ShopComponent implements OnInit {
   ngOnInit(): void {
     this.loadCategories();
     this.loadBrands();
-    this.loadProducts();
+    // Pre-select category from query param (e.g. navigating from categories page)
+    this.route.queryParams.subscribe(params => {
+      if (params['category']) {
+        this.selectedCategories.set([params['category']]);
+      }
+      this.loadProducts(1);
+    });
   }
 
   // ── Load helpers ──────────────────────────────────────────────────────────

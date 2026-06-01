@@ -1,1 +1,302 @@
-<p>shop works!</p>
+<!-- Page Header -->
+<app-page-header
+  title="All Products"
+  icon="fa-box-open"
+  breadcrumbLabel="All Products"
+  subtitle="Explore our complete product collection"
+  gradient="green"
+/>
+
+<div class="min-h-screen bg-gray-50">
+  <div class="container mx-auto px-4 py-6">
+
+    <!-- Main layout: Sidebar + Content -->
+    <div class="flex gap-6 items-start">
+
+      <!-- ══════════════════════════════════════════
+           DESKTOP SIDEBAR — always visible on lg+
+      ══════════════════════════════════════════ -->
+      <aside class="hidden lg:flex flex-col gap-4 w-56 shrink-0">
+
+        <!-- Categories -->
+        <div class="bg-white rounded-xl p-4 border border-gray-100">
+          <h3 class="font-semibold text-gray-900 mb-3 text-sm">Categories</h3>
+          <div class="flex flex-col gap-2 max-h-52 overflow-y-auto pr-1">
+            @for (cat of categories(); track cat._id) {
+              <label class="flex items-center gap-2 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  [checked]="isCategorySelected(cat._id)"
+                  (change)="toggleCategory(cat._id)"
+                  class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer"
+                >
+                <span class="text-sm text-gray-600 group-hover:text-primary transition-colors truncate">
+                  {{ cat.name }}
+                </span>
+              </label>
+            }
+          </div>
+        </div>
+
+        <!-- Price Range -->
+        <div class="bg-white rounded-xl p-4 border border-gray-100">
+          <h3 class="font-semibold text-gray-900 mb-3 text-sm">Price Range</h3>
+          <div class="flex gap-2 mb-3">
+            <input
+              type="number"
+              [ngModel]="minPrice()"
+              (ngModelChange)="minPrice.set($event)"
+              name="minPrice"
+              placeholder="Min"
+              class="w-full px-2 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary"
+            >
+            <input
+              type="number"
+              [ngModel]="maxPrice()"
+              (ngModelChange)="maxPrice.set($event)"
+              name="maxPrice"
+              placeholder="Max"
+              class="w-full px-2 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary"
+            >
+          </div>
+          <div class="grid grid-cols-2 gap-1.5">
+            @for (range of priceRanges; track range.label) {
+              <button
+                type="button"
+                (click)="setPriceRange(range.max)"
+                class="cursor-pointer py-1.5 text-xs rounded-lg border transition-colors"
+                [class.bg-primary]="isPriceRangeActive(range.max)"
+                [class.text-white]="isPriceRangeActive(range.max)"
+                [class.border-primary]="isPriceRangeActive(range.max)"
+                [class.bg-white]="!isPriceRangeActive(range.max)"
+                [class.text-gray-600]="!isPriceRangeActive(range.max)"
+                [class.border-gray-200]="!isPriceRangeActive(range.max)"
+              >
+                {{ range.label }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Brands -->
+        <div class="bg-white rounded-xl p-4 border border-gray-100">
+          <h3 class="font-semibold text-gray-900 mb-3 text-sm">Brands</h3>
+          <div class="flex flex-col gap-2 max-h-52 overflow-y-auto pr-1">
+            @for (brand of brands(); track brand._id) {
+              <label class="flex items-center gap-2 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  [checked]="isBrandSelected(brand._id)"
+                  (change)="toggleBrand(brand._id)"
+                  class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer"
+                >
+                <span class="text-sm text-gray-600 group-hover:text-primary transition-colors truncate">
+                  {{ brand.name }}
+                </span>
+              </label>
+            }
+          </div>
+        </div>
+
+        <!-- Clear filters -->
+        @if (activeFiltersCount() > 0) {
+          <button
+            type="button"
+            (click)="resetFilters()"
+            class="cursor-pointer w-full py-2 text-sm text-red-500 border border-red-200 rounded-xl hover:bg-red-50 transition-colors bg-white"
+          >
+            <i class="fa-solid fa-xmark mr-1"></i>
+            Clear All Filters
+          </button>
+        }
+      </aside>
+
+      <!-- ══════════════════════════════════════════
+           MOBILE SIDEBAR — drawer overlay
+      ══════════════════════════════════════════ -->
+      @if (showFilters()) {
+        <div class="fixed inset-0 bg-black/50 z-40 lg:hidden" (click)="showFilters.set(false)"></div>
+        <div class="fixed top-0 left-0 h-full w-72 bg-white z-50 flex flex-col gap-4 p-4 overflow-y-auto shadow-2xl lg:hidden">
+          <div class="flex items-center justify-between">
+            <h2 class="font-bold text-gray-900">Filters</h2>
+            <button type="button" (click)="showFilters.set(false)" class="cursor-pointer w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-lg">
+              <i class="fa-solid fa-xmark text-gray-500"></i>
+            </button>
+          </div>
+          <div class="bg-gray-50 rounded-xl p-4">
+            <h3 class="font-semibold text-gray-900 mb-3 text-sm">Categories</h3>
+            <div class="flex flex-col gap-2 max-h-48 overflow-y-auto">
+              @for (cat of categories(); track cat._id) {
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" [checked]="isCategorySelected(cat._id)" (change)="toggleCategory(cat._id)" class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer">
+                  <span class="text-sm text-gray-600 truncate">{{ cat.name }}</span>
+                </label>
+              }
+            </div>
+          </div>
+          <div class="bg-gray-50 rounded-xl p-4">
+            <h3 class="font-semibold text-gray-900 mb-3 text-sm">Price Range</h3>
+            <div class="flex gap-2 mb-3">
+              <input type="number" [ngModel]="minPrice()" (ngModelChange)="minPrice.set($event)" name="minPriceMobile" placeholder="Min" class="w-full px-2 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary">
+              <input type="number" [ngModel]="maxPrice()" (ngModelChange)="maxPrice.set($event)" name="maxPriceMobile" placeholder="Max" class="w-full px-2 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary">
+            </div>
+            <div class="grid grid-cols-2 gap-1.5">
+              @for (range of priceRanges; track range.label) {
+                <button type="button" (click)="setPriceRange(range.max)"
+                  class="cursor-pointer py-1.5 text-xs rounded-lg border transition-colors"
+                  [class.bg-primary]="isPriceRangeActive(range.max)" [class.text-white]="isPriceRangeActive(range.max)"
+                  [class.border-primary]="isPriceRangeActive(range.max)" [class.bg-white]="!isPriceRangeActive(range.max)"
+                  [class.text-gray-600]="!isPriceRangeActive(range.max)" [class.border-gray-200]="!isPriceRangeActive(range.max)">
+                  {{ range.label }}
+                </button>
+              }
+            </div>
+          </div>
+          <div class="bg-gray-50 rounded-xl p-4">
+            <h3 class="font-semibold text-gray-900 mb-3 text-sm">Brands</h3>
+            <div class="flex flex-col gap-2 max-h-48 overflow-y-auto">
+              @for (brand of brands(); track brand._id) {
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" [checked]="isBrandSelected(brand._id)" (change)="toggleBrand(brand._id)" class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer">
+                  <span class="text-sm text-gray-600 truncate">{{ brand.name }}</span>
+                </label>
+              }
+            </div>
+          </div>
+          @if (activeFiltersCount() > 0) {
+            <button type="button" (click)="resetFilters()" class="cursor-pointer w-full py-2 text-sm text-red-500 border border-red-200 rounded-xl hover:bg-red-50 transition-colors bg-white">
+              <i class="fa-solid fa-xmark mr-1"></i> Clear All Filters
+            </button>
+          }
+        </div>
+      }
+
+      <!-- ══════════════════════════════════════════
+           MAIN CONTENT
+      ══════════════════════════════════════════ -->
+      <div class="flex-1 min-w-0">
+
+        <!-- Toolbar -->
+        <div class="flex items-center justify-between mb-4 gap-3">
+          <div class="flex items-center gap-3">
+            <button
+              type="button"
+              (click)="showFilters.set(true)"
+              class="cursor-pointer lg:hidden flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:border-primary hover:text-primary transition-colors bg-white"
+            >
+              <i class="fa-solid fa-filter text-xs"></i>
+              Filters
+              @if (activeFiltersCount() > 0) {
+                <span class="w-5 h-5 bg-primary text-white text-[10px] rounded-full flex items-center justify-center">
+                  {{ activeFiltersCount() }}
+                </span>
+              }
+            </button>
+            <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden bg-white">
+              <button type="button" (click)="viewMode.set('grid')" class="cursor-pointer w-9 h-9 flex items-center justify-center transition-colors"
+                [class.bg-primary]="viewMode() === 'grid'" [class.text-white]="viewMode() === 'grid'" [class.text-gray-500]="viewMode() !== 'grid'">
+                <i class="fa-solid fa-grip text-sm"></i>
+              </button>
+              <button type="button" (click)="viewMode.set('list')" class="cursor-pointer w-9 h-9 flex items-center justify-center transition-colors"
+                [class.bg-primary]="viewMode() === 'list'" [class.text-white]="viewMode() === 'list'" [class.text-gray-500]="viewMode() !== 'list'">
+                <i class="fa-solid fa-list text-sm"></i>
+              </button>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-gray-500 hidden sm:inline">Sort by:</span>
+            <select [ngModel]="sortBy()" (ngModelChange)="onSortChange($event)" name="sort"
+              class="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary bg-white cursor-pointer">
+              @for (opt of sortOptions; track opt.value) {
+                <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <!-- Loading -->
+        @if (isLoading()) {
+          <div class="flex items-center justify-center py-24">
+            <i class="fa-solid fa-spinner fa-spin text-primary text-3xl"></i>
+          </div>
+        }
+
+        <!-- No results -->
+        @else if (products().length === 0) {
+          <div class="flex flex-col items-center justify-center py-24 gap-4">
+            <i class="fa-solid fa-box-open text-gray-200 text-6xl"></i>
+            <h3 class="text-lg font-semibold text-gray-900">No products found</h3>
+            <p class="text-sm text-gray-500">Try adjusting your filters or search term</p>
+            <button type="button" (click)="resetFilters()"
+              class="cursor-pointer px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">
+              Clear Filters
+            </button>
+          </div>
+        }
+
+        <!-- Grid view -->
+        @else if (viewMode() === 'grid') {
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            @for (product of products(); track product._id) {
+              <app-product-card [product]="product" />
+            }
+          </div>
+        }
+
+        <!-- List view -->
+        @else {
+          <div class="flex flex-col gap-3">
+            @for (product of products(); track product._id) {
+              <div class="bg-white rounded-xl border border-gray-100 p-4 flex gap-4 hover:shadow-md transition-shadow">
+                <a [routerLink]="['/products', product._id, product.slug]" class="shrink-0">
+                  <div class="w-24 h-24 bg-gray-50 rounded-xl overflow-hidden">
+                    <img [src]="product.imageCover" [alt]="product.title" class="w-full h-full object-contain p-2">
+                  </div>
+                </a>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs text-primary font-medium mb-1">{{ product.category.name }}</p>
+                  <a [routerLink]="['/products', product._id, product.slug]">
+                    <h3 class="font-semibold text-gray-900 text-sm hover:text-primary transition-colors line-clamp-2 mb-2">{{ product.title }}</h3>
+                  </a>
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <span class="font-bold text-gray-900">{{ (product.priceAfterDiscount ?? product.price) }} EGP</span>
+                      @if (product.priceAfterDiscount && product.priceAfterDiscount < product.price) {
+                        <span class="text-xs text-gray-400 line-through ml-1">{{ product.price }} EGP</span>
+                      }
+                    </div>
+                    <a [routerLink]="['/products', product._id, product.slug]" class="text-xs text-primary hover:underline font-medium">View Details</a>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Pagination -->
+        @if (!isLoading() && totalPages() > 1) {
+          <div class="flex items-center justify-center gap-2 mt-8">
+            <button type="button" (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() === 1"
+              class="cursor-pointer w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-gray-500 hover:border-primary hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed transition-colors bg-white">
+              <i class="fa-solid fa-chevron-left text-xs"></i>
+            </button>
+            @for (page of pageNumbers; track page) {
+              <button type="button" (click)="goToPage(page)"
+                class="cursor-pointer w-9 h-9 flex items-center justify-center rounded-lg text-sm font-medium transition-colors border"
+                [class.bg-primary]="page === currentPage()" [class.text-white]="page === currentPage()"
+                [class.border-primary]="page === currentPage()" [class.bg-white]="page !== currentPage()"
+                [class.text-gray-600]="page !== currentPage()" [class.border-gray-200]="page !== currentPage()">
+                {{ page }}
+              </button>
+            }
+            <button type="button" (click)="goToPage(currentPage() + 1)" [disabled]="currentPage() === totalPages()"
+              class="cursor-pointer w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-gray-500 hover:border-primary hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed transition-colors bg-white">
+              <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
+          </div>
+        }
+
+      </div>
+    </div>
+  </div>
+</div>

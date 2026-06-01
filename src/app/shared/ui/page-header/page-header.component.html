@@ -1,0 +1,34 @@
+<div
+  class="text-white"
+  [class.bg-gradient-to-br]="true"
+  [ngClass]="{
+    'from-green-600 via-green-500 to-green-400':    gradient() === 'green',
+    'from-purple-600 via-purple-500 to-purple-400': gradient() === 'purple',
+    'from-blue-600 via-blue-500 to-blue-400':       gradient() === 'blue',
+    'from-orange-600 via-orange-500 to-orange-400': gradient() === 'orange'
+  }"
+>
+  <div class="container mx-auto px-4 py-10 sm:py-14">
+
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-sm text-white/70 mb-6 flex-wrap">
+      <a routerLink="/" class="hover:text-white transition-colors">Home</a>
+      <span class="text-white/40">/</span>
+      <span class="text-white font-medium">{{ breadcrumbLabel() }}</span>
+    </nav>
+
+    <!-- Icon + Title + Subtitle -->
+    <div class="flex items-center gap-5">
+      <div class="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-xl ring-1 ring-white/30 shrink-0">
+        <i class="fa-solid {{ icon() }} text-3xl text-white"></i>
+      </div>
+      <div>
+        <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">{{ title() }}</h1>
+        @if (subtitle()) {
+          <p class="text-white/80 mt-1">{{ subtitle() }}</p>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>

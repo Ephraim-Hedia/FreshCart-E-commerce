@@ -1,6 +1,8 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Product } from '../../../core/models/product.interface';
+import { CartService } from '../../../core/services/cart.service';
+import { WishlistService } from '../../../core/services/wishlist.service';
 
 @Component({
   selector: 'app-product-card',
@@ -10,32 +12,54 @@ import { Product } from '../../../core/models/product.interface';
   styleUrl: './product-card.component.css',
 })
 export class ProductCardComponent {
+  private readonly cartService     = inject(CartService);
+  private readonly wishlistService = inject(WishlistService);
+
   product = input.required<Product>();
- 
-  // Placeholder functions for future implementation
-  onAddToWishlist(): void {
-    // TODO: Implement after auth is ready
-    console.log('Add to wishlist:', this.product()._id);
-  }
- 
-  onAddToCart(): void {
-    // TODO: Implement after cart service is ready
-    console.log('Add to cart:', this.product()._id);
-  }
- 
-  calculateDiscount(): number | null {
-    const product = this.product();
-    if (product.priceAfterDiscount && product.price) {
-      return Math.round(
-        ((product.price - product.priceAfterDiscount) / product.price) * 100
-      );
+
+  // ── Loading states ─────────────────────────────────────────────────────────
+  isAddingToCart    = signal(false);
+  isWishlistLoading = signal(false);
+
+  // ── Computed ───────────────────────────────────────────────────────────────
+  isWishlisted = computed(() =>
+    this.wishlistService.isInWishlist(this.product()._id)
+  );
+
+  discount = computed(() => {
+    const p = this.product();
+    if (p.priceAfterDiscount && p.priceAfterDiscount < p.price) {
+      return Math.round(((p.price - p.priceAfterDiscount) / p.price) * 100);
     }
     return null;
-  }
- 
-  getCurrentPrice(): number {
-    const product = this.product();
-    return product.priceAfterDiscount || product.price;
+  });
+
+  displayPrice = computed(() =>
+    this.product().priceAfterDiscount ?? this.product().price
+  );
+
+  // ── Actions ────────────────────────────────────────────────────────────────
+  onAddToCart(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isAddingToCart.set(true);
+    this.cartService.addProductToCart(this.product()._id).subscribe({
+      next:  () => this.isAddingToCart.set(false),
+      error: () => this.isAddingToCart.set(false),
+    });
   }
 
+  toggleWishlist(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isWishlistLoading.set(true);
+    const id = this.product()._id;
+    const action$ = this.isWishlisted()
+      ? this.wishlistService.removeProductFromWishlist(id)
+      : this.wishlistService.addProductToWishlist(id);
+    action$.subscribe({
+      next:  () => this.isWishlistLoading.set(false),
+      error: () => this.isWishlistLoading.set(false),
+    });
+  }
 }

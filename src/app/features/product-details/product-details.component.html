@@ -340,20 +340,73 @@
   
           <!-- Tab: Shipping -->
           @if (activeTab() === 'shipping') {
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              @for (item of [
-                {icon: 'fa-truck', title: 'Free Delivery', desc: 'On orders over 500 EGP'},
-                {icon: 'fa-rotate-left', title: 'Easy Returns', desc: '14-day return policy'},
-                {icon: 'fa-shield-halved', title: 'Secure Payment', desc: '100% secure checkout'}
-              ]; track item.title) {
-                <div class="flex items-start gap-3 p-4 bg-gray-50 rounded-xl">
-                  <i class="fa-solid {{ item.icon }} text-primary text-xl mt-0.5 shrink-0"></i>
-                  <div>
-                    <p class="font-semibold text-gray-900 text-sm">{{ item.title }}</p>
-                    <p class="text-xs text-gray-500 mt-0.5">{{ item.desc }}</p>
+            <div class="flex flex-col gap-4">
+
+              <!-- Two cards: Shipping + Returns -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <!-- Shipping Information -->
+                <div class="bg-green-50 rounded-2xl p-5">
+                  <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center shrink-0">
+                      <i class="fa-solid fa-truck text-white text-sm"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-900">Shipping Information</h4>
+                  </div>
+                  <div class="flex flex-col gap-2.5">
+                    @for (item of [
+                      'Free shipping on orders over $50',
+                      'Standard delivery: 3-5 business days',
+                      'Express delivery available (1-2 business days)',
+                      'Track your order in real-time'
+                    ]; track item) {
+                      <div class="flex items-start gap-2 text-sm text-gray-700">
+                        <i class="fa-solid fa-check text-primary text-xs mt-0.5 shrink-0"></i>
+                        <span>{{ item }}</span>
+                      </div>
+                    }
                   </div>
                 </div>
-              }
+
+                <!-- Returns & Refunds -->
+                <div class="bg-green-50 rounded-2xl p-5">
+                  <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center shrink-0">
+                      <i class="fa-solid fa-rotate-left text-white text-sm"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-900">Returns & Refunds</h4>
+                  </div>
+                  <div class="flex flex-col gap-2.5">
+                    @for (item of [
+                      '30-day hassle-free returns',
+                      'Full refund or exchange available',
+                      'Free return shipping on defective items',
+                      'Easy online return process'
+                    ]; track item) {
+                      <div class="flex items-start gap-2 text-sm text-gray-700">
+                        <i class="fa-solid fa-check text-primary text-xs mt-0.5 shrink-0"></i>
+                        <span>{{ item }}</span>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Buyer Protection Guarantee -->
+              <div class="flex items-start gap-4 p-5 border border-gray-200 rounded-2xl bg-white">
+                <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center shrink-0">
+                  <i class="fa-solid fa-shield-halved text-gray-500 text-sm"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-gray-900 mb-1">Buyer Protection Guarantee</h4>
+                  <p class="text-sm text-gray-500 leading-relaxed">
+                    Get a full refund if your order doesn't arrive or isn't as described.
+                    We ensure your shopping experience is safe and secure.
+                  </p>
+                </div>
+              </div>
+
             </div>
           }
         </div>
@@ -369,7 +422,7 @@
   
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
               @for (related of relatedProducts(); track related._id) {
-                <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden group">
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden group hover:shadow-lg transition-shadow duration-300">
                   <a [routerLink]="['/products', related._id]" class="block">
                     <div class="relative aspect-square bg-gray-50 overflow-hidden p-3">
                       @if (related.priceAfterDiscount && related.priceAfterDiscount < related.price) {

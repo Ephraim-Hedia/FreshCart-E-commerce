@@ -1,1 +1,67 @@
-<p>not-found works!</p>
+<div class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div class="text-center max-w-lg">
+  
+      <!-- 404 Number -->
+      <div class="relative mb-6">
+        <h1 class="text-[10rem] sm:text-[14rem] font-black text-gray-100 leading-none select-none">
+          404
+        </h1>
+        <!-- Floating cart icon over the numbers -->
+        <div class="absolute inset-0 flex items-center justify-center">
+          <div class="w-24 h-24 bg-primary rounded-3xl flex items-center justify-center shadow-2xl shadow-primary/30 rotate-6">
+            <i class="fa-solid fa-cart-shopping text-white text-4xl -rotate-6"></i>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Message -->
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+        Oops! Page Not Found
+      </h2>
+      <p class="text-gray-500 mb-8 leading-relaxed">
+        The page you're looking for doesn't exist or has been moved.
+        Let's get you back on track!
+      </p>
+  
+      <!-- Actions -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <a
+          routerLink="/"
+          class="cursor-pointer w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-primary hover:bg-green-700 text-white font-semibold rounded-xl transition-colors"
+        >
+          <i class="fa-solid fa-house text-sm"></i>
+          Back to Home
+        </a>
+        <a
+          routerLink="/shop"
+          class="cursor-pointer w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 border border-gray-200 hover:border-primary hover:text-primary text-gray-600 font-semibold rounded-xl transition-colors bg-white"
+        >
+          <i class="fa-solid fa-store text-sm"></i>
+          Browse Products
+        </a>
+      </div>
+  
+      <!-- Quick links -->
+      <div class="mt-10 pt-8 border-t border-gray-100">
+        <p class="text-sm text-gray-400 mb-4">Or explore these pages:</p>
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <a routerLink="/categories" class="cursor-pointer text-sm text-gray-500 hover:text-primary transition-colors flex items-center gap-1.5">
+            <i class="fa-solid fa-layer-group text-xs"></i> Categories
+          </a>
+          <span class="text-gray-200">·</span>
+          <a routerLink="/brands" class="cursor-pointer text-sm text-gray-500 hover:text-primary transition-colors flex items-center gap-1.5">
+            <i class="fa-solid fa-tags text-xs"></i> Brands
+          </a>
+          <span class="text-gray-200">·</span>
+          <a routerLink="/cart" class="cursor-pointer text-sm text-gray-500 hover:text-primary transition-colors flex items-center gap-1.5">
+            <i class="fa-solid fa-cart-shopping text-xs"></i> Cart
+          </a>
+          <span class="text-gray-200">·</span>
+          <a routerLink="/wishlist" class="cursor-pointer text-sm text-gray-500 hover:text-primary transition-colors flex items-center gap-1.5">
+            <i class="fa-regular fa-heart text-xs"></i> Wishlist
+          </a>
+        </div>
+      </div>
+  
+    </div>
+  </div>

@@ -66,6 +66,11 @@ export const routes: Routes = [
     canActivate:[authGuard]
   },
   {
+    path: "products/:id/:slug",
+    loadComponent: () => import('./features/product-details/product-details.component').then(m => m.ProductDetailsComponent),
+    title: "Product Details"
+  },
+  {
     path: "**",
     loadComponent: () => import('./features/not-found/not-found.component').then(m => m.NotFoundComponent),
     title: "Not Found Page"

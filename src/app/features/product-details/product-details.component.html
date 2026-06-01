@@ -1,1 +1,413 @@
-<p>product-details works!</p>
+<div class="min-h-screen bg-white">
+    <div class="container mx-auto px-4 py-6">
+  
+      <!-- ── Loading ── -->
+      @if (isLoading()) {
+        <div class="flex items-center justify-center py-32">
+          <i class="fa-solid fa-spinner fa-spin text-primary text-4xl"></i>
+        </div>
+      }
+  
+      @else if (product()) {
+  
+        <!-- Breadcrumb -->
+        <nav class="text-sm text-gray-500 mb-6 flex items-center gap-2 flex-wrap">
+          <a routerLink="/" class="flex items-center gap-1 hover:text-primary">
+            <i class="fa-solid fa-house text-xs"></i> Home
+          </a>
+          <i class="fa-solid fa-chevron-right text-xs text-gray-300"></i>
+          <span class="hover:text-primary cursor-pointer">{{ product()!.category.name }}</span>
+          <i class="fa-solid fa-chevron-right text-xs text-gray-300"></i>
+          <span class="hover:text-primary cursor-pointer">{{ product()!.subcategory[0]?.name }}</span>
+          <i class="fa-solid fa-chevron-right text-xs text-gray-300"></i>
+          <span class="text-gray-900 font-medium">{{ product()!.title }}</span>
+        </nav>
+  
+        <!-- ══════════════ MAIN PRODUCT SECTION ══════════════ -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
+  
+          <!-- LEFT: Image Gallery -->
+          <div class="flex flex-col gap-4">
+            <!-- Main Image -->
+            <div class="w-full aspect-square rounded-2xl border border-gray-100 bg-gray-50 overflow-hidden flex items-center justify-center p-6">
+              <img
+                [src]="selectedImage()"
+                [alt]="product()!.title"
+                class="w-full h-full object-contain"
+              >
+            </div>
+            <!-- Thumbnail strip -->
+            <div class="flex gap-3 overflow-x-auto pb-1">
+              <!-- Cover image thumbnail -->
+              <button
+                type="button"
+                (click)="selectImage(product()!.imageCover)"
+                class="w-20 h-20 cursor-pointer shrink-0 rounded-xl border-2 overflow-hidden transition-colors"
+                [class.border-primary]="selectedImage() === product()!.imageCover"
+                [class.border-gray-200]="selectedImage() !== product()!.imageCover"
+              >
+                <img [src]="product()!.imageCover" [alt]="product()!.title" class="w-full h-full object-contain p-1">
+              </button>
+              <!-- Extra images -->
+              @for (img of product()!.images; track img) {
+                <button
+                  type="button"
+                  (click)="selectImage(img)"
+                  class="w-20 h-20 shrink-0 rounded-xl border-2 overflow-hidden cursor-pointer transition-colors"
+                  [class.border-primary]="selectedImage().includes(img)"
+                  [class.border-gray-200]="!selectedImage().includes(img)"
+                >
+                  <img
+                    [src]="img"
+                    [alt]="product()!.title"
+                    class="w-full h-full object-contain p-1"
+                  >
+                </button>
+              }
+            </div>
+          </div>
+  
+          <!-- RIGHT: Product Info -->
+          <div class="flex flex-col gap-5">
+  
+            <!-- Category + Brand badges -->
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-xs bg-green-50 text-primary font-medium px-3 py-1 rounded-full">
+                {{ product()!.category.name }}
+              </span>
+              <span class="text-xs bg-gray-100 text-gray-600 font-medium px-3 py-1 rounded-full">
+                {{ product()!.brand.name }}
+              </span>
+            </div>
+  
+            <!-- Title -->
+            <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 leading-tight">
+              {{ product()!.title }}
+            </h1>
+  
+            <!-- Rating -->
+            <div class="flex items-center gap-2">
+              <div class="flex items-center gap-0.5">
+                @for (star of stars(); track $index) {
+                  @if (star === 'full') {
+                    <i class="fa-solid fa-star text-yellow-400 text-sm"></i>
+                  } @else if (star === 'half') {
+                    <i class="fa-solid fa-star-half-stroke text-yellow-400 text-sm"></i>
+                  } @else {
+                    <i class="fa-regular fa-star text-yellow-400 text-sm"></i>
+                  }
+                }
+              </div>
+              <span class="text-sm font-semibold text-gray-700">{{ product()!.ratingsAverage }}</span>
+              <span class="text-sm text-gray-400">({{ product()!.ratingsQuantity }} reviews)</span>
+            </div>
+  
+            <!-- Price -->
+            <div class="flex items-baseline gap-3">
+              <span class="text-3xl font-bold text-gray-900">{{ displayPrice() }} EGP</span>
+              @if (hasDiscount()) {
+                <span class="text-lg text-gray-400 line-through">{{ product()!.price }} EGP</span>
+              }
+            </div>
+  
+            <!-- In Stock badge -->
+            <div>
+              <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
+                <span class="w-2 h-2 rounded-full bg-primary"></span>
+                In Stock
+              </span>
+            </div>
+  
+            <!-- Description -->
+            <p class="text-gray-500 text-sm leading-relaxed">
+              {{ product()!.description }}
+            </p>
+  
+            <!-- Quantity -->
+            <div>
+              <p class="text-sm font-semibold text-gray-700 mb-2">Quantity</p>
+              <div class="flex items-center gap-4">
+                <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+                  <button
+                    type="button"
+                    (click)="decreaseQty()"
+                    [disabled]="quantity() <= 1"
+                    class="cursor-pointer w-10 h-10 flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <i class="fa-solid fa-minus text-xs"></i>
+                  </button>
+                  <span class="w-12 text-center font-semibold text-gray-900">{{ quantity() }}</span>
+                  <button
+                    type="button"
+                    (click)="increaseQty()"
+                    [disabled]="quantity() >= (product()!.quantity)"
+                    class="cursor-pointer w-10 h-10 flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <i class="fa-solid fa-plus text-xs"></i>
+                  </button>
+                </div>
+                <span class="text-sm text-gray-400">{{ product()!.quantity }} available</span>
+              </div>
+            </div>
+  
+            <!-- Total Price -->
+            <div class="flex items-center gap-3">
+              <span class="text-sm font-medium text-gray-600">Total Price:</span>
+              <span class="text-xl font-bold text-primary">{{ totalPrice() | number:'1.2-2' }} EGP</span>
+            </div>
+  
+            <!-- Action Buttons -->
+            <div class="flex gap-3">
+              <button
+                type="button"
+                (click)="addToCart()"
+                [disabled]="isAddingToCart()"
+                class="cursor-pointer flex-1 flex items-center justify-center gap-2 py-3 bg-primary hover:bg-green-700 disabled:bg-green-400 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors"
+              >
+                @if (isAddingToCart()) {
+                  <i class="fa-solid fa-spinner fa-spin"></i> Adding...
+                } @else {
+                  <i class="fa-solid fa-cart-shopping"></i> Add to Cart
+                }
+              </button>
+              <button
+                type="button"
+                class="cursor-pointer flex-1 flex items-center justify-center gap-2 py-3 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl transition-colors"
+              >
+                <i class="fa-solid fa-bolt"></i> Buy Now
+              </button>
+            </div>
+  
+            <!-- Wishlist + Share -->
+            <div class="flex gap-3">
+              <button
+                type="button"
+                (click)="addToWishlist()"
+                [disabled]="isAddingToWishlist()"
+                class="cursor-pointer flex-1 flex items-center justify-center gap-2 py-2.5 border border-gray-200 hover:border-primary hover:text-primary text-gray-600 text-sm font-medium rounded-xl transition-colors disabled:opacity-50"
+              >
+                @if (isAddingToWishlist()) {
+                  <i class="fa-solid fa-spinner fa-spin text-xs"></i>
+                } @else {
+                  <i class="fa-regular fa-heart text-sm"></i>
+                }
+                Add to Wishlist
+              </button>
+              <button
+                type="button"
+                class="cursor-pointer w-12 flex items-center justify-center border border-gray-200 hover:border-primary hover:text-primary text-gray-500 rounded-xl transition-colors"
+              >
+                <i class="fa-solid fa-share-nodes text-sm"></i>
+              </button>
+            </div>
+  
+            <!-- Trust Badges -->
+            <div class="grid grid-cols-3 gap-3 pt-2">
+              <div class="flex items-center gap-2 p-3 bg-gray-50 rounded-xl">
+                <i class="fa-solid fa-truck text-primary text-lg shrink-0"></i>
+                <div>
+                  <p class="text-xs font-semibold text-gray-900">Free Delivery</p>
+                  <p class="text-[10px] text-gray-400">Orders over $50</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 p-3 bg-gray-50 rounded-xl">
+                <i class="fa-solid fa-rotate-left text-primary text-lg shrink-0"></i>
+                <div>
+                  <p class="text-xs font-semibold text-gray-900">30 Days Return</p>
+                  <p class="text-[10px] text-gray-400">Money back</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 p-3 bg-gray-50 rounded-xl">
+                <i class="fa-solid fa-shield-halved text-primary text-lg shrink-0"></i>
+                <div>
+                  <p class="text-xs font-semibold text-gray-900">Secure Payment</p>
+                  <p class="text-[10px] text-gray-400">100% Protected</p>
+                </div>
+              </div>
+            </div>
+  
+          </div>
+        </div>
+  
+        <!-- ══════════════ TABS ══════════════ -->
+        <div class="mb-10">
+  
+          <!-- Tab Headers -->
+          <div class="flex border-b border-gray-200 mb-6 gap-6">
+            <button
+              type="button"
+              (click)="activeTab.set('details')"
+              class="cursor-pointer pb-3 text-sm font-medium transition-colors border-b-2 -mb-px"
+              [class.border-primary]="activeTab() === 'details'"
+              [class.text-primary]="activeTab() === 'details'"
+              [class.border-transparent]="activeTab() !== 'details'"
+              [class.text-gray-500]="activeTab() !== 'details'"
+            >
+              <i class="fa-solid fa-tag mr-1.5"></i>
+              Product Details
+            </button>
+            <button
+              type="button"
+              (click)="activeTab.set('reviews')"
+              class="cursor-pointer pb-3 text-sm font-medium transition-colors border-b-2 -mb-px"
+              [class.border-primary]="activeTab() === 'reviews'"
+              [class.text-primary]="activeTab() === 'reviews'"
+              [class.border-transparent]="activeTab() !== 'reviews'"
+              [class.text-gray-500]="activeTab() !== 'reviews'"
+            >
+              <i class="fa-solid fa-star mr-1.5"></i>
+              Reviews ({{ product()!.ratingsQuantity }})
+            </button>
+            <button
+              type="button"
+              (click)="activeTab.set('shipping')"
+              class="cursor-pointer pb-3 text-sm font-medium transition-colors border-b-2 -mb-px"
+              [class.border-primary]="activeTab() === 'shipping'"
+              [class.text-primary]="activeTab() === 'shipping'"
+              [class.border-transparent]="activeTab() !== 'shipping'"
+              [class.text-gray-500]="activeTab() !== 'shipping'"
+            >
+              <i class="fa-solid fa-truck mr-1.5"></i>
+              Shipping & Returns
+            </button>
+          </div>
+  
+          <!-- Tab: Product Details -->
+          @if (activeTab() === 'details') {
+            <div>
+              <h3 class="font-semibold text-gray-900 mb-3">About this Product</h3>
+              <p class="text-gray-500 text-sm leading-relaxed mb-6">{{ product()!.description }}</p>
+  
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Product Information -->
+                <div class="border border-gray-100 rounded-xl p-5">
+                  <h4 class="font-semibold text-gray-900 mb-4">Product Information</h4>
+                  <div class="flex flex-col gap-3">
+                    <div class="flex justify-between text-sm">
+                      <span class="text-gray-500">Category</span>
+                      <span class="font-medium text-gray-900">{{ product()!.category.name }}</span>
+                    </div>
+                    <div class="border-t border-gray-50"></div>
+                    <div class="flex justify-between text-sm">
+                      <span class="text-gray-500">Subcategory</span>
+                      <span class="font-medium text-gray-900">{{ product()!.subcategory[0]?.name }}</span>
+                    </div>
+                    <div class="border-t border-gray-50"></div>
+                    <div class="flex justify-between text-sm">
+                      <span class="text-gray-500">Brand</span>
+                      <span class="font-medium text-gray-900">{{ product()!.brand.name }}</span>
+                    </div>
+                    <div class="border-t border-gray-50"></div>
+                    <div class="flex justify-between text-sm">
+                      <span class="text-gray-500">Items Sold</span>
+                      <span class="font-medium text-gray-900">{{ product()!.sold }}+ sold</span>
+                    </div>
+                  </div>
+                </div>
+  
+                <!-- Key Features -->
+                <div class="border border-gray-100 rounded-xl p-5">
+                  <h4 class="font-semibold text-gray-900 mb-4">Key Features</h4>
+                  <div class="flex flex-col gap-3">
+                    @for (feature of ['Premium Quality Product', '100% Authentic Guarantee', 'Fast & Secure Packaging', 'Quality Tested']; track feature) {
+                      <div class="flex items-center gap-2 text-sm text-gray-600">
+                        <i class="fa-solid fa-check text-primary text-xs shrink-0"></i>
+                        {{ feature }}
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+  
+          <!-- Tab: Reviews -->
+          @if (activeTab() === 'reviews') {
+            <div class="text-center py-12 text-gray-400">
+              <i class="fa-regular fa-star text-4xl mb-3"></i>
+              <p class="text-sm">Reviews section coming soon</p>
+            </div>
+          }
+  
+          <!-- Tab: Shipping -->
+          @if (activeTab() === 'shipping') {
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              @for (item of [
+                {icon: 'fa-truck', title: 'Free Delivery', desc: 'On orders over 500 EGP'},
+                {icon: 'fa-rotate-left', title: 'Easy Returns', desc: '14-day return policy'},
+                {icon: 'fa-shield-halved', title: 'Secure Payment', desc: '100% secure checkout'}
+              ]; track item.title) {
+                <div class="flex items-start gap-3 p-4 bg-gray-50 rounded-xl">
+                  <i class="fa-solid {{ item.icon }} text-primary text-xl mt-0.5 shrink-0"></i>
+                  <div>
+                    <p class="font-semibold text-gray-900 text-sm">{{ item.title }}</p>
+                    <p class="text-xs text-gray-500 mt-0.5">{{ item.desc }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+  
+        <!-- ══════════════ YOU MAY ALSO LIKE ══════════════ -->
+        @if (relatedProducts().length > 0) {
+          <div class="mb-12">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-xl font-bold text-gray-900">
+                You May Also <span class="text-primary">Like</span>
+              </h2>
+            </div>
+  
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+              @for (related of relatedProducts(); track related._id) {
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden group">
+                  <a [routerLink]="['/products', related._id]" class="block">
+                    <div class="relative aspect-square bg-gray-50 overflow-hidden p-3">
+                      @if (related.priceAfterDiscount && related.priceAfterDiscount < related.price) {
+                        <span class="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md z-10">
+                          -{{ ((related.price - related.priceAfterDiscount) / related.price * 100) | number:'1.0-0' }}%
+                        </span>
+                      }
+                      <img
+                        [src]="related.imageCover"
+                        [alt]="related.title"
+                        class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                      >
+                    </div>
+                  </a>
+                  <div class="p-3">
+                    <p class="text-[10px] text-gray-400 mb-1">{{ related.category.name }}</p>
+                    <h3 class="text-xs font-semibold text-gray-900 line-clamp-2 mb-2 leading-snug">{{ related.title }}</h3>
+                    <div class="flex items-center gap-0.5 mb-2">
+                      @for (i of [1,2,3,4,5]; track i) {
+                        <i class="fa-solid fa-star text-yellow-400 text-[10px]"
+                           [class.text-gray-200]="i > (related.ratingsAverage ?? 0)"></i>
+                      }
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <span class="font-bold text-gray-900 text-sm">
+                          {{ (related.priceAfterDiscount ?? related.price) }} EGP
+                        </span>
+                        @if (related.priceAfterDiscount && related.priceAfterDiscount < related.price) {
+                          <span class="text-xs text-gray-400 line-through ml-1">{{ related.price }} EGP</span>
+                        }
+                      </div>
+                      <button
+                        type="button"
+                        (click)="addRelatedToCart(related._id)"
+                        class="cursor-pointer w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center hover:bg-green-700 transition-colors"
+                      >
+                        <i class="fa-solid fa-plus text-[10px]"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+  
+      }
+    </div>
+  </div>

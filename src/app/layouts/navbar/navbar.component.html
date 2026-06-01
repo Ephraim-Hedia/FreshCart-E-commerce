@@ -77,7 +77,7 @@
           >
           <button
             type="submit"
-            class="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-green-600 hover:bg-green-700 text-white rounded-full transition-colors"
+            class="cursor-pointer absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-green-600 hover:bg-green-700 text-white rounded-full transition-colors"
           >
             <i class="fa-solid fa-search text-xs"></i>
           </button>
@@ -202,25 +202,25 @@
               </div>
               <!-- Menu items -->
               <div class="py-1">
-                <button (click)="navigateToProfile()" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 text-left">
+                <button (click)="navigateToProfile()" class="cursor-pointer w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 text-left">
                   <i class="fa-regular fa-user w-4 text-gray-500"></i> My Profile
                 </button>
-                <button (click)="navigateToOrders()" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 text-left">
+                <button (click)="navigateToOrders()" class="cursor-pointer w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 text-left">
                   <i class="fa-solid fa-bag-shopping w-4 text-gray-500"></i> My Orders
                 </button>
-                <button (click)="navigateToWishlist()" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 text-left">
+                <button (click)="navigateToWishlist()" class="cursor-pointer w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 text-left">
                   <i class="fa-regular fa-heart w-4 text-gray-500"></i> My Wishlist
                 </button>
-                <button (click)="navigateToAddresses()" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 text-left">
+                <button (click)="navigateToAddresses()" class="cursor-pointer w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 text-left">
                   <i class="fa-solid fa-location-dot w-4 text-gray-500"></i> Addresses
                 </button>
-                <button (click)="navigateToSettings()" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 text-left">
+                <button (click)="navigateToSettings()" class="cursor-pointer w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 text-left">
                   <i class="fa-solid fa-gear w-4 text-gray-500"></i> Settings
                 </button>
               </div>
               <!-- Sign out -->
               <div class="border-t border-gray-100">
-                <button (click)="signOut()" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 text-left">
+                <button (click)="signOut()" class="cursor-pointer w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 text-left">
                   <i class="fa-solid fa-right-from-bracket w-4"></i> Sign Out
                 </button>
               </div>
@@ -261,7 +261,7 @@
       <button
         type="button"
         (click)="toggleMobileMenu()"
-        class="flex lg:hidden items-center justify-center w-9 h-9 bg-primary text-white rounded-full hover:bg-green-700 transition-colors"
+        class="cursor-pointer flex lg:hidden items-center justify-center w-9 h-9 bg-primary text-white rounded-full hover:bg-green-700 transition-colors"
       >
         <i class="fa-solid fa-bars text-sm"></i>
       </button>
@@ -273,7 +273,7 @@
 <!-- ===================== MOBILE DRAWER ===================== -->
 @if (isMobileMenuOpen()) {
   <!-- Overlay -->
-  <div class="fixed inset-0 bg-black/50 z-40" (click)="closeMobileMenu()"></div>
+  <div class="cursor-pointer fixed inset-0 bg-black/50 z-40" (click)="closeMobileMenu()"></div>
 
   <!-- Drawer slides in from right -->
   <div class="fixed top-0 right-0 h-full w-72 bg-white z-50 flex flex-col shadow-2xl animate-slide-in-right">
@@ -283,7 +283,7 @@
       <a routerLink="/" (click)="closeMobileMenu()">
         <img src="/fresh-logo.svg" alt="FreshCart" class="h-8">
       </a>
-      <button (click)="closeMobileMenu()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors">
+      <button (click)="closeMobileMenu()" class="cursor-pointer w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors">
         <i class="fa-solid fa-xmark text-gray-500 text-lg"></i>
       </button>
     </div>
@@ -298,7 +298,7 @@
           placeholder="Search products..."
           class="w-full pl-3 pr-12 py-2.5 text-sm bg-gray-100 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
         >
-        <button type="submit" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-green-600 text-white rounded-lg">
+        <button type="submit" class="cursor-pointer absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-green-600 text-white rounded-lg">
           <i class="fa-solid fa-search text-xs"></i>
         </button>
       </form>
@@ -336,7 +336,7 @@
           <i class="fa-solid fa-user text-gray-400 w-5"></i>
           <span class="text-sm font-medium text-gray-700">{{ userData().name }}</span>
         </div>
-        <button (click)="signOut(); closeMobileMenu()" class="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors text-left">
+        <button (click)="signOut(); closeMobileMenu()" class="cursor-pointer w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors text-left">
           <i class="fa-solid fa-right-from-bracket w-5"></i>
           Sign Out
         </button>

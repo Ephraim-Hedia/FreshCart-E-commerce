@@ -1,7 +1,7 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, computed, HostListener, inject, OnInit, PLATFORM_ID, Signal, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/auth/services/auth.service';
 import { CartService } from '../../core/services/cart.service';
 import { WishlistService } from '../../core/services/wishlist.service';
@@ -17,6 +17,7 @@ export class NavbarComponent implements OnInit {
   private readonly cartService     = inject(CartService);
   private readonly wishlistService = inject(WishlistService);
   private readonly platformId      = inject(PLATFORM_ID);
+  private readonly router          = inject(Router);
 
   ngOnInit(): void {
     if(isPlatformBrowser(this.platformId))
@@ -73,8 +74,7 @@ export class NavbarComponent implements OnInit {
   // ── Search ─────────────────────────────────────────────────────────────────
   onSearch(): void {
     if (this.searchQuery.trim()) {
-      // TODO: this.router.navigate(['/search'], { queryParams: { q: this.searchQuery } });
-      console.log('Search:', this.searchQuery);
+      this.router.navigate(['/shop'], { queryParams: { keyword: this.searchQuery.trim() } });
     }
   }
   
@@ -109,11 +109,10 @@ export class NavbarComponent implements OnInit {
     this.closeMobileMenu();
   }
 
-    // TODO: replace with router.navigate() when pages are built
-    navigateToProfile():   void { this.closeUserDropdown(); }
-    navigateToOrders():    void { this.closeUserDropdown(); }
-    navigateToWishlist():  void { this.closeUserDropdown(); }
-    navigateToAddresses(): void { this.closeUserDropdown(); }
-    navigateToSettings():  void { this.closeUserDropdown(); }
+  navigateToProfile():   void { this.router.navigate(['/profile']);    this.closeUserDropdown(); }
+  navigateToOrders():    void { this.router.navigate(['/allorders']); this.closeUserDropdown(); }
+  navigateToWishlist():  void { this.router.navigate(['/wishlist']);  this.closeUserDropdown(); }
+  navigateToAddresses(): void { this.router.navigate(['/profile']);   this.closeUserDropdown(); }
+  navigateToSettings():  void { this.router.navigate(['/profile']);   this.closeUserDropdown(); }
   
 }

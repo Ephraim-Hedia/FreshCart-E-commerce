@@ -13,7 +13,7 @@ export class AuthService {
 
   // ── Auth state signals ─────────────────────────────────────────────────────
   isLogged = signal<boolean>(false);
-  userData = signal<{ name: string; email: string }>({ name: '', email: '' });
+  userData = signal<{ id: string; name: string; email: string }>({ id: '', name: '', email: '' });
   email    = signal<string>('');
 
   // ── Token helpers ──────────────────────────────────────────────────────────
@@ -26,11 +26,12 @@ export class AuthService {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       this.userData.set({
+        id:    payload.id    ?? '',
         name:  payload.name  ?? '',
         email: this.email(), // email comes from localStorage (not always in JWT)
       });
     } catch {
-      this.userData.set({ name: '', email: '' });
+      this.userData.set({ id: '', name: '', email: '' });    
     }
   }
  
@@ -40,7 +41,7 @@ export class AuthService {
     localStorage.removeItem('freshToken');
     localStorage.removeItem('email');
     this.isLogged.set(false);
-    this.userData.set({ name: '', email: '' }); // ✅ clear navbar display immediately
+    this.userData.set({ id: '', name: '', email: '' }); // ✅ clear navbar display immediately
     this.email.set('');
     this.router.navigate(['/']);
   }

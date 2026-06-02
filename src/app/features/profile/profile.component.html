@@ -1,0 +1,68 @@
+<!-- Green Header -->
+<div class="bg-gradient-to-r from-green-500 to-green-400">
+    <div class="container mx-auto px-4 py-8">
+      <nav class="text-sm text-green-100 mb-4 flex items-center gap-2">
+        <a routerLink="/" class="hover:text-white transition-colors">Home</a>
+        <span class="text-green-200">/</span>
+        <span class="text-white font-medium">My Account</span>
+      </nav>
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-user text-white text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-white">My Account</h1>
+          <p class="text-green-100 text-sm mt-0.5">Manage your addresses and account settings</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Body: Sidebar + Content -->
+  <div class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+  
+        <!-- Sidebar -->
+        <aside class="lg:col-span-1">
+          <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <div class="px-4 py-3 border-b border-gray-100">
+              <h2 class="text-sm font-semibold text-gray-900">My Account</h2>
+            </div>
+            <nav class="p-2 flex flex-col gap-1">
+              <!-- My Addresses -->
+              <a
+                routerLink="/profile/addresses"
+                routerLinkActive="bg-green-50 text-primary"
+                class="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+              >
+                <span class="flex items-center gap-2.5">
+                  <i class="fa-solid fa-location-dot text-xs w-4 text-center"></i>
+                  My Addresses
+                </span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-300"></i>
+              </a>
+              <!-- Settings -->
+              <a
+                routerLink="/profile/settings"
+                routerLinkActive="bg-green-50 text-primary"
+                class="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+              >
+                <span class="flex items-center gap-2.5">
+                  <i class="fa-solid fa-gear text-xs w-4 text-center"></i>
+                  Settings
+                </span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-300"></i>
+              </a>
+            </nav>
+          </div>
+        </aside>
+  
+        <!-- Main Content (child routes render here) -->
+        <main class="lg:col-span-3">
+          <router-outlet />
+        </main>
+  
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,88 @@
+<div class="flex flex-col gap-5">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-lg font-bold text-gray-900">My Addresses</h2>
+        <p class="text-sm text-gray-500 mt-0.5">Manage your saved delivery addresses</p>
+      </div>
+      <button
+        type="button"
+        (click)="onAddAddress()"
+        class="cursor-pointer flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-colors"
+      >
+        <i class="fa-solid fa-plus text-xs"></i>
+        Add Address
+      </button>
+    </div>
+  
+    <!-- Loading -->
+    @if (isLoading()) {
+      <div class="flex items-center justify-center py-16">
+        <i class="fa-solid fa-spinner fa-spin text-primary text-2xl"></i>
+      </div>
+    }
+  
+    <!-- Empty state -->
+    @else if (addresses().length === 0) {
+      <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-12 text-center">
+        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fa-solid fa-location-dot text-gray-300 text-2xl"></i>
+        </div>
+        <h3 class="font-semibold text-gray-900 mb-1">No addresses saved</h3>
+        <p class="text-sm text-gray-500 mb-5">Add a delivery address to make checkout faster.</p>
+        <button
+          type="button"
+          (click)="onAddAddress()"
+          class="cursor-pointer inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-colors"
+        >
+          <i class="fa-solid fa-plus text-xs"></i>
+          Add Your First Address
+        </button>
+      </div>
+    }
+  
+    <!-- Address cards -->
+    @else {
+      <div class="flex flex-col gap-3">
+        @for (address of addresses(); track address._id) {
+          <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex items-start gap-4">
+            <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-location-dot text-primary text-sm"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="font-semibold text-gray-900">{{ address.name }}</p>
+              <p class="text-sm text-gray-600 mt-0.5">{{ address.details }}</p>
+              <div class="flex items-center gap-4 mt-2 text-xs text-gray-400">
+                <span class="flex items-center gap-1">
+                  <i class="fa-solid fa-phone text-xs"></i>
+                  {{ address.phone }}
+                </span>
+                <span class="flex items-center gap-1">
+                  <i class="fa-solid fa-city text-xs"></i>
+                  {{ address.city }}
+                </span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                (click)="onEditAddress(address._id)"
+                class="cursor-pointer w-8 h-8 flex items-center justify-center border border-gray-200 text-gray-500 hover:border-primary hover:text-primary rounded-lg transition-colors"
+              >
+                <i class="fa-solid fa-pen text-xs"></i>
+              </button>
+              <button
+                type="button"
+                (click)="onDeleteAddress(address._id)"
+                class="cursor-pointer w-8 h-8 flex items-center justify-center border border-gray-200 text-gray-500 hover:border-red-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <i class="fa-solid fa-trash text-xs"></i>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  
+  </div>

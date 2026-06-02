@@ -1,6 +1,9 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/guards/auth-guard';
 import { visitorGuard } from './core/auth/guards/visitor-guard';
+import { ProfileComponent } from './features/profile/profile.component';
+import { SettingsComponent } from './features/profile/components/settings/settings.component';
+import { AddressesComponent } from './features/profile/components/addresses/addresses.component';
 
 export const routes: Routes = [
   {
@@ -69,6 +72,16 @@ export const routes: Routes = [
     path: "products/:id/:slug",
     loadComponent: () => import('./features/product-details/product-details.component').then(m => m.ProductDetailsComponent),
     title: "Product Details"
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent,
+    canActivate: [authGuard],
+    children: [
+      { path: '', redirectTo: 'settings', pathMatch: 'full' },
+      { path: 'settings',   component: SettingsComponent },
+      { path: 'addresses',  component: AddressesComponent },
+    ]
   },
   {
     path: "**",

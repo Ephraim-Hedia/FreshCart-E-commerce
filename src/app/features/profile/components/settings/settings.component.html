@@ -1,0 +1,208 @@
+<div class="flex flex-col gap-5">
+
+    <!-- ── Section Title ── -->
+    <div>
+      <h2 class="text-lg font-bold text-gray-900">Account Settings</h2>
+      <p class="text-sm text-gray-500 mt-0.5">Update your profile information and change your password</p>
+    </div>
+  
+    <!-- ══════════════════════════════════════════
+         PROFILE INFORMATION
+    ══════════════════════════════════════════ -->
+    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+  
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-user text-primary text-sm"></i>
+        </div>
+        <div>
+          <h3 class="font-semibold text-gray-900">Profile Information</h3>
+          <p class="text-xs text-gray-500">Update your personal details</p>
+        </div>
+      </div>
+  
+      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" novalidate class="flex flex-col gap-4">
+  
+        <!-- Full Name -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-gray-700">Full Name</label>
+          <input
+            type="text"
+            formControlName="name"
+            class="w-full px-4 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+            [class.border-red-400]="nameCtrl.invalid && nameCtrl.touched"
+            [class.border-gray-300]="!(nameCtrl.invalid && nameCtrl.touched)"
+          >
+          @if (nameCtrl.invalid && nameCtrl.touched) {
+            <p class="text-xs text-red-500"><i class="fa-solid fa-circle-exclamation mr-1"></i>Name is required</p>
+          }
+        </div>
+  
+        <!-- Email -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-gray-700">Email Address</label>
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="Enter your email"
+            class="w-full px-4 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+            [class.border-red-400]="emailCtrl.invalid && emailCtrl.touched"
+            [class.border-gray-300]="!(emailCtrl.invalid && emailCtrl.touched)"
+          >
+          @if (emailCtrl.invalid && emailCtrl.touched) {
+            <p class="text-xs text-red-500"><i class="fa-solid fa-circle-exclamation mr-1"></i>Valid email is required</p>
+          }
+        </div>
+  
+        <!-- Phone -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-gray-700">Phone Number</label>
+          <input
+            type="tel"
+            formControlName="phone"
+            placeholder="01xxxxxxxxx"
+            class="w-full px-4 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+            [class.border-red-400]="phoneCtrl.invalid && phoneCtrl.touched"
+            [class.border-gray-300]="!(phoneCtrl.invalid && phoneCtrl.touched)"
+          >
+          @if (phoneCtrl.invalid && phoneCtrl.touched) {
+            <p class="text-xs text-red-500"><i class="fa-solid fa-circle-exclamation mr-1"></i>Valid Egyptian phone number required</p>
+          }
+        </div>
+  
+        <div>
+          <button
+            type="submit"
+            [disabled]="isSavingProfile()"
+            class="cursor-pointer flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-green-700 disabled:bg-green-400 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
+          >
+            @if (isSavingProfile()) {
+              <i class="fa-solid fa-spinner fa-spin"></i> Saving...
+            } @else {
+              <i class="fa-solid fa-floppy-disk"></i> Save Changes
+            }
+          </button>
+        </div>
+  
+      </form>
+    </div>
+  
+    <!-- ══════════════════════════════════════════
+         ACCOUNT INFORMATION (read-only)
+    ══════════════════════════════════════════ -->
+    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+      <h3 class="font-semibold text-gray-900 mb-4">Account Information</h3>
+      <div class="flex flex-col gap-3">
+        <div class="flex items-center justify-between py-2 border-b border-gray-50">
+          <span class="text-sm text-gray-500">User ID</span>
+          <span class="text-sm text-gray-900 font-mono">{{ userData().id || '—' }}</span>
+        </div>
+        <div class="flex items-center justify-between py-2">
+          <span class="text-sm text-gray-500">Role</span>
+          <span class="text-xs font-semibold text-primary bg-green-50 px-2.5 py-1 rounded-full">User</span>
+        </div>
+      </div>
+    </div>
+  
+    <!-- ══════════════════════════════════════════
+         CHANGE PASSWORD
+    ══════════════════════════════════════════ -->
+    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+  
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-lock text-orange-500 text-sm"></i>
+        </div>
+        <div>
+          <h3 class="font-semibold text-gray-900">Change Password</h3>
+          <p class="text-xs text-gray-500">Update your account password</p>
+        </div>
+      </div>
+  
+      <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" novalidate class="flex flex-col gap-4">
+  
+        <!-- Current Password -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-gray-700">Current Password</label>
+          <div class="relative">
+            <input
+              [type]="showCurrentPw() ? 'text' : 'password'"
+              formControlName="currentPassword"
+              placeholder="Enter your current password"
+              class="w-full px-4 pr-10 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+              [class.border-red-400]="currentPasswordCtrl.invalid && currentPasswordCtrl.touched"
+              [class.border-gray-300]="!(currentPasswordCtrl.invalid && currentPasswordCtrl.touched)"
+            >
+            <button type="button" (click)="showCurrentPw.update(v => !v)"
+              class="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+              <i class="fa-solid text-sm" [class.fa-eye]="!showCurrentPw()" [class.fa-eye-slash]="showCurrentPw()"></i>
+            </button>
+          </div>
+          @if (currentPasswordCtrl.invalid && currentPasswordCtrl.touched) {
+            <p class="text-xs text-red-500"><i class="fa-solid fa-circle-exclamation mr-1"></i>Current password is required</p>
+          }
+        </div>
+  
+        <!-- New Password -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-gray-700">New Password</label>
+          <div class="relative">
+            <input
+              [type]="showNewPw() ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="Enter your new password"
+              class="w-full px-4 pr-10 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+              [class.border-red-400]="passwordCtrl.invalid && passwordCtrl.touched"
+              [class.border-gray-300]="!(passwordCtrl.invalid && passwordCtrl.touched)"
+            >
+            <button type="button" (click)="showNewPw.update(v => !v)"
+              class="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+              <i class="fa-solid text-sm" [class.fa-eye]="!showNewPw()" [class.fa-eye-slash]="showNewPw()"></i>
+            </button>
+          </div>
+          <p class="text-xs text-gray-400">Must be at least 6 characters</p>
+          @if (passwordCtrl.invalid && passwordCtrl.touched) {
+            <p class="text-xs text-red-500"><i class="fa-solid fa-circle-exclamation mr-1"></i>Password must be at least 6 characters</p>
+          }
+        </div>
+  
+        <!-- Confirm Password -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-gray-700">Confirm New Password</label>
+          <div class="relative">
+            <input
+              [type]="showConfirmPw() ? 'text' : 'password'"
+              formControlName="rePassword"
+              placeholder="Confirm your new password"
+              class="w-full px-4 pr-10 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+              [class.border-red-400]="rePasswordCtrl.invalid && rePasswordCtrl.touched"
+              [class.border-gray-300]="!(rePasswordCtrl.invalid && rePasswordCtrl.touched)"
+            >
+            <button type="button" (click)="showConfirmPw.update(v => !v)"
+              class="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+              <i class="fa-solid text-sm" [class.fa-eye]="!showConfirmPw()" [class.fa-eye-slash]="showConfirmPw()"></i>
+            </button>
+          </div>
+          @if (rePasswordCtrl.errors?.['mismatch'] && rePasswordCtrl.touched) {
+            <p class="text-xs text-red-500"><i class="fa-solid fa-circle-exclamation mr-1"></i>Passwords do not match</p>
+          }
+        </div>
+  
+        <div>
+          <button
+            type="submit"
+            [disabled]="isChangingPassword()"
+            class="cursor-pointer flex items-center gap-2 px-5 py-2.5 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
+          >
+            @if (isChangingPassword()) {
+              <i class="fa-solid fa-spinner fa-spin"></i> Changing...
+            } @else {
+              <i class="fa-solid fa-lock"></i> Change Password
+            }
+          </button>
+        </div>
+  
+      </form>
+    </div>
+  
+  </div>

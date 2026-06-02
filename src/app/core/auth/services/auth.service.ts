@@ -69,6 +69,12 @@ export class AuthService {
   }
 
   updateLoggedUserPassword(data:object):Observable<any>{
+    // this is the object that we are sending to the server
+    //   {
+    //     "currentPassword":"123456",
+    //     "password":"pass1234",
+    //     "rePassword":"pass1234"
+    // }
     return this.httpClient.put(`${environment.baseUrl}/api/v1/users/changeMyPassword`,data)
   }
 
@@ -78,6 +84,12 @@ export class AuthService {
 
   updateLoggedUserData(data:object):Observable<any>
   {
+    // this is the object that we are sending to the server
+    // {
+    //   "name": "Ahmed Abd Al-Muti",
+    //   "email": "ahmedmutt2i2@gmail.com",
+    //   "phone": "01010700700"
+    // }
     return this.httpClient.put(`${environment.baseUrl}/api/v1/users/updateMe/`,data)
   }
 

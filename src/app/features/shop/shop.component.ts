@@ -161,7 +161,7 @@ export class ShopComponent implements OnInit {
   }
   isPriceRangeActive(max: number): boolean { return this.maxPrice() === max; }
 
-  onSortChange(value: string): void { this.sortBy.set(value); this.loadProducts(1); }
+  onSortChange(value: string): void { this.sortBy.set(value); this.loadProducts(); }
 
   resetFilters(): void {
     this.searchKeyword.set('');

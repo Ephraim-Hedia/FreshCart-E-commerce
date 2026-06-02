@@ -72,12 +72,9 @@ export class ShopComponent implements OnInit {
     this.loadBrands();
     // Pre-select category from query param (e.g. navigating from categories page)
     this.route.queryParams.subscribe(params => {
-      if (params['category']) {
-        this.selectedCategories.set([params['category']]);
-      }
-      if (params['brand']) {
-        this.selectedBrands.set([params['brand']]);
-      }
+      if (params['category']) this.selectedCategories.set([params['category']]);
+      if (params['brand'])    this.selectedBrands.set([params['brand']]);
+      if (params['keyword'])  this.searchKeyword.set(params['keyword']);
       this.loadProducts(1);
     });
   }

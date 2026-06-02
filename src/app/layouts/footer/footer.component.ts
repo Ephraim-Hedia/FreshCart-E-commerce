@@ -10,17 +10,37 @@ import { RouterLink } from '@angular/router';
 export class FooterComponent {
 
   shopLinks = [
-    { label: 'All Products', route: '/products' },
+    { label: 'All Products', route: '/shop' },
     { label: 'Categories', route: '/categories' },
     { label: 'Brands', route: '/brands' },
-    { label: 'Electronics', route: '/products?category=electronics' },
-    { label: "Men's Fashion", route: '/products?category=mens-fashion' },
-    { label: "Women's Fashion", route: '/products?category=womens-fashion' },
+    {
+      label: 'Electronics',
+      route: '/shop',
+      queryParams: {
+        category: '6439d2d167d9aa4ca970649f'
+      }
+    },
+  
+    {
+      label: "Men's Fashion",
+      route: '/shop',
+      queryParams: {
+        category: '6439d5b90049ad0b52b90048'
+      }
+    },
+  
+    {
+      label: "Women's Fashion",
+      route: '/shop',
+      queryParams: {
+        category: '6439d58a0049ad0b52b9003f'
+      }
+    }
   ];
  
   accountLinks = [
-    { label: 'My Account', route: '/account' },
-    { label: 'Order History', route: '/orders' },
+    { label: 'My Account', route: '/profile' },
+    { label: 'Order History', route: '/allorders' },
     { label: 'Wishlist', route: '/wishlist' },
     { label: 'Shopping Cart', route: '/cart' },
     { label: 'Sign In', route: '/login' },
@@ -32,7 +52,7 @@ export class FooterComponent {
     { label: 'Help Center', route: '/help' },
     { label: 'Shipping Info', route: '/shipping' },
     { label: 'Returns & Refunds', route: '/returns' },
-    { label: 'Track Order', route: '/track-order' },
+    { label: 'Track Order', route: '/allorders' },
   ];
  
   legalLinks = [

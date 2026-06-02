@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { switchMap } from 'rxjs';
 import { AddressService } from '../../../../core/services/address.service';
 import { Address, AddAddressDto } from '../../../../core/models/address.interface';
 
@@ -14,12 +15,12 @@ export class AddressesComponent implements OnInit {
   private readonly fb             = inject(FormBuilder);
 
   // ── State ──────────────────────────────────────────────────────────────────
-  addresses      = signal<Address[]>([]);
-  isLoading      = signal(true);
-  showForm       = signal(false);      // toggle add form
-  editingId      = signal<string | null>(null); // null = adding, string = editing
-  isSaving       = signal(false);
-  deletingId     = signal<string | null>(null);
+  addresses  = signal<Address[]>([]);
+  isLoading  = signal(true);
+  showForm   = signal(false);
+  editingId  = signal<string | null>(null); // null = adding, string = old address ID
+  isSaving   = signal(false);
+  deletingId = signal<string | null>(null);
 
   // ── Form ───────────────────────────────────────────────────────────────────
   addressForm = this.fb.group({
@@ -62,7 +63,7 @@ export class AddressesComponent implements OnInit {
 
   // ── Open edit form ─────────────────────────────────────────────────────────
   openEditForm(address: Address): void {
-    this.editingId.set(address._id);
+    this.editingId.set(address._id); // store old ID for delete step
     this.addressForm.patchValue({
       name:    address.name,
       details: address.details,
@@ -79,14 +80,30 @@ export class AddressesComponent implements OnInit {
     this.addressForm.reset();
   }
 
-  // ── Save (add only — API has no update endpoint) ──────────────────────────
-  saveAddress(): void {
+  // ── Add new address ───────────────────────────────────────────────────────
+  addAddress(): void {
     if (this.addressForm.invalid) { this.addressForm.markAllAsTouched(); return; }
     this.isSaving.set(true);
-
     const dto: AddAddressDto = this.addressForm.value as AddAddressDto;
-
     this.addressService.addAddress(dto).subscribe({
+      next: (res) => {
+        this.addresses.set(res.data);
+        this.cancelForm();
+        this.isSaving.set(false);
+      },
+      error: () => this.isSaving.set(false),
+    });
+  }
+
+  // ── Update = Add new first → then Delete old ───────────────────────────────
+  updateAddress(): void {
+    if (this.addressForm.invalid) { this.addressForm.markAllAsTouched(); return; }
+    const oldId = this.editingId()!;
+    this.isSaving.set(true);
+    const dto: AddAddressDto = this.addressForm.value as AddAddressDto;
+    this.addressService.addAddress(dto).pipe(
+      switchMap(() => this.addressService.removeAddress(oldId))
+    ).subscribe({
       next: (res) => {
         this.addresses.set(res.data);
         this.cancelForm();

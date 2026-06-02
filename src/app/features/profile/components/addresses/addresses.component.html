@@ -26,7 +26,7 @@
         {{ isEditing ? 'Edit Address' : 'Add New Address' }}
       </h3>
 
-      <form [formGroup]="addressForm" (ngSubmit)="saveAddress()" novalidate class="flex flex-col gap-4">
+      <form [formGroup]="addressForm" (ngSubmit)="isEditing ? updateAddress() : addAddress()" novalidate class="flex flex-col gap-4">
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <!-- Name / Label -->
@@ -102,7 +102,8 @@
             class="cursor-pointer flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-green-700 disabled:bg-green-400 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
           >
             @if (isSaving()) {
-              <i class="fa-solid fa-spinner fa-spin"></i> Saving...
+              <i class="fa-solid fa-spinner fa-spin"></i>
+              {{ isEditing ? 'Updating...' : 'Saving...' }}
             } @else {
               <i class="fa-solid fa-floppy-disk"></i>
               {{ isEditing ? 'Update Address' : 'Save Address' }}

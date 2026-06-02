@@ -63,7 +63,7 @@
         <ul class="space-y-3">
           @for (link of shopLinks; track link.route) {
             <li>
-              <a [routerLink]="link.route" class="text-sm text-gray-400 hover:text-primary transition-colors">
+              <a [routerLink]="link.route" [queryParams]="link.queryParams" class="text-sm text-gray-400 hover:text-primary transition-colors">
                 {{ link.label }}
               </a>
             </li>

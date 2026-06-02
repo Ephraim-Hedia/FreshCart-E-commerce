@@ -122,6 +122,7 @@
               @for (category of categories; track category.name) {
                 <a
                   [routerLink]="category.route"
+                  [queryParams]="category.queryParams"
                   class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-600 transition-colors"
                 >
                   {{ category.name }}
@@ -332,10 +333,10 @@
     <!-- User section -->
     <div class="px-2 py-2 mt-auto">
       @if (isLoggedIn()) {
-        <div class="flex items-center gap-3 px-3 py-2.5">
+        <button routerLink="/profile" class="cursor-pointer hover:bg-green-100 flex items-center gap-3 px-3 py-2.5">
           <i class="fa-solid fa-user text-gray-400 w-5"></i>
           <span class="text-sm font-medium text-gray-700">{{ userData().name }}</span>
-        </div>
+        </button>
         <button (click)="signOut(); closeMobileMenu()" class="cursor-pointer w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors text-left">
           <i class="fa-solid fa-right-from-bracket w-5"></i>
           Sign Out

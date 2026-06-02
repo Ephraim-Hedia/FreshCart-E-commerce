@@ -55,10 +55,35 @@ export class NavbarComponent implements OnInit {
   // ── Categories ─────────────────────────────────────────────────────────────
   categories = [
     { name: 'All Categories',  route: '/categories' },
-    { name: 'Electronics',     route: '/categories/electronics' },
-    { name: "Women's Fashion", route: '/categories/womens-fashion' },
-    { name: "Men's Fashion",   route: '/categories/mens-fashion' },
-    { name: 'Beauty & Health', route: '/categories/beauty-health' },
+    {
+      name: 'Electronics',
+      route: '/shop',
+      queryParams: {
+        category: '6439d2d167d9aa4ca970649f'
+      }
+    },
+  
+    {
+      name: "Men's Fashion",
+      route: '/shop',
+      queryParams: {
+        category: '6439d5b90049ad0b52b90048'
+      }
+    },
+  
+    {
+      name: "Women's Fashion",
+      route: '/shop',
+      queryParams: {
+        category: '6439d58a0049ad0b52b9003f'
+      }
+    },
+    { name: 'Beauty & Health', 
+      route: '/shop', 
+      queryParams: {
+        category: '6439d30b67d9aa4ca97064b1'
+      }
+    }
   ];
 
  
@@ -109,10 +134,10 @@ export class NavbarComponent implements OnInit {
     this.closeMobileMenu();
   }
 
-  navigateToProfile():   void { this.router.navigate(['/profile']);    this.closeUserDropdown(); }
-  navigateToOrders():    void { this.router.navigate(['/allorders']); this.closeUserDropdown(); }
-  navigateToWishlist():  void { this.router.navigate(['/wishlist']);  this.closeUserDropdown(); }
-  navigateToAddresses(): void { this.router.navigate(['/profile']);   this.closeUserDropdown(); }
-  navigateToSettings():  void { this.router.navigate(['/profile']);   this.closeUserDropdown(); }
+  navigateToProfile():   void { this.router.navigate(['/profile']);             this.closeUserDropdown(); }
+  navigateToOrders():    void { this.router.navigate(['/allorders']);           this.closeUserDropdown(); }
+  navigateToWishlist():  void { this.router.navigate(['/wishlist']);            this.closeUserDropdown(); }
+  navigateToAddresses(): void { this.router.navigate(['/profile/addresses']);   this.closeUserDropdown(); }
+  navigateToSettings():  void { this.router.navigate(['/profile/settings']);    this.closeUserDropdown(); }
   
 }

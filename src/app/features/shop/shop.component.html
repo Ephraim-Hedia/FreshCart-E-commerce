@@ -222,7 +222,7 @@
         }
 
         <!-- No results -->
-        @else if (products().length === 0) {
+        @else if (filteredProducts().length === 0) {
           <div class="flex flex-col items-center justify-center py-24 gap-4">
             <i class="fa-solid fa-box-open text-gray-200 text-6xl"></i>
             <h3 class="text-lg font-semibold text-gray-900">No products found</h3>
@@ -237,7 +237,7 @@
         <!-- Grid view -->
         @else if (viewMode() === 'grid') {
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            @for (product of products(); track product._id) {
+            @for (product of pagedProducts(); track product._id) {
               <app-product-card [product]="product" />
             }
           </div>
@@ -246,7 +246,7 @@
         <!-- List view -->
         @else {
           <div class="flex flex-col gap-3">
-            @for (product of products(); track product._id) {
+            @for (product of pagedProducts(); track product._id) {
               <div class="bg-white rounded-xl border border-gray-100 p-4 flex gap-4 hover:shadow-md transition-shadow">
                 <a [routerLink]="['/products', product._id, product.slug]" class="shrink-0">
                   <div class="w-24 h-24 bg-gray-50 rounded-xl overflow-hidden">
@@ -274,22 +274,22 @@
         }
 
         <!-- Pagination -->
-        @if (!isLoading() && totalPages() > 1) {
+        @if (!isLoading() && totalFilteredPages() > 1) {
           <div class="flex items-center justify-center gap-2 mt-8">
-            <button type="button" (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() === 1"
+            <button type="button" (click)="goToPage(clientPage() - 1)" [disabled]="clientPage() === 1"
               class="cursor-pointer w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-gray-500 hover:border-primary hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed transition-colors bg-white">
               <i class="fa-solid fa-chevron-left text-xs"></i>
             </button>
             @for (page of pageNumbers; track page) {
               <button type="button" (click)="goToPage(page)"
                 class="cursor-pointer w-9 h-9 flex items-center justify-center rounded-lg text-sm font-medium transition-colors border"
-                [class.bg-primary]="page === currentPage()" [class.text-white]="page === currentPage()"
-                [class.border-primary]="page === currentPage()" [class.bg-white]="page !== currentPage()"
-                [class.text-gray-600]="page !== currentPage()" [class.border-gray-200]="page !== currentPage()">
+                [class.bg-primary]="page === clientPage()" [class.text-white]="page === clientPage()"
+                [class.border-primary]="page === clientPage()" [class.bg-white]="page !== clientPage()"
+                [class.text-gray-600]="page !== clientPage()" [class.border-gray-200]="page !== clientPage()">
                 {{ page }}
               </button>
             }
-            <button type="button" (click)="goToPage(currentPage() + 1)" [disabled]="currentPage() === totalPages()"
+            <button type="button" (click)="goToPage(clientPage() + 1)" [disabled]="clientPage() === totalFilteredPages()"
               class="cursor-pointer w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-gray-500 hover:border-primary hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed transition-colors bg-white">
               <i class="fa-solid fa-chevron-right text-xs"></i>
             </button>

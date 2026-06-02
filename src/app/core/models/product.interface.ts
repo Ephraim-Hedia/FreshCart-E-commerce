@@ -42,7 +42,7 @@ export interface ProductBrand {
 
 export interface ProductsResponse {
   results: number;
-  metadata: {
+  metadata?: {          // optional — API omits it when results = 0
     currentPage: number;
     numberOfPages: number;
     limit: number;

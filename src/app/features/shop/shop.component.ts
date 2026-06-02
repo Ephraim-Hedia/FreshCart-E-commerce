@@ -9,38 +9,32 @@ import { Category } from '../../core/models/category.interface';
 import { ProductCardComponent } from '../../shared/ui/product-card/product-card.component';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header.component';
 
-interface Brand {
-  _id: string;
-  name: string;
-  slug: string;
-  image: string;
-}
+interface Brand { _id: string; name: string; slug: string; image: string; }
 
 @Component({
   selector: 'app-shop',
   standalone: true,
-  imports: [RouterModule, FormsModule, ProductCardComponent,PageHeaderComponent],
+  imports: [RouterModule, FormsModule, ProductCardComponent, PageHeaderComponent],
   templateUrl: './shop.component.html',
   styleUrl: './shop.component.css',
 })
 export class ShopComponent implements OnInit {
-  private readonly route            = inject(ActivatedRoute);
-  private readonly productsService  = inject(ProductsService);
-  private readonly categoryService  = inject(CategoryService);
-  private readonly brandService     = inject(BrandService);
+  private readonly route           = inject(ActivatedRoute);
+  private readonly productsService = inject(ProductsService);
+  private readonly categoryService = inject(CategoryService);
+  private readonly brandService    = inject(BrandService);
 
-  // ── Data signals ───────────────────────────────────────────────────────────
-  products      = signal<Product[]>([]);
-  categories    = signal<Category[]>([]);
-  brands        = signal<Brand[]>([]);
+  // ── Data ───────────────────────────────────────────────────────────────────
+  products   = signal<Product[]>([]);  // raw results from API
+  categories = signal<Category[]>([]);
+  brands     = signal<Brand[]>([]);
 
   // ── UI state ───────────────────────────────────────────────────────────────
-  isLoading       = signal(true);
-  showFilters     = signal(false); // mobile filter sidebar toggle
-  viewMode        = signal<'grid' | 'list'>('grid');
-  currentPage     = signal(1);
-  totalPages      = signal(1);
-  totalResults    = signal(0);
+  isLoading    = signal(true);
+  showFilters  = signal(false);
+  viewMode     = signal<'grid' | 'list'>('grid');
+  clientPage   = signal(1);   // client-side pagination page
+  readonly pageSize = 12;     // items per page
 
   // ── Filter state ──────────────────────────────────────────────────────────
   searchKeyword      = signal('');
@@ -50,12 +44,34 @@ export class ShopComponent implements OnInit {
   maxPrice           = signal<number | null>(null);
   sortBy             = signal('');
 
-  // ── Price quick filters ───────────────────────────────────────────────────
+  // ── Client-side keyword filter ────────────────────────────────────────────
+  // API keyword is broken → filter by title, category name, brand name in browser
+  filteredProducts = computed(() => {
+    const kw = this.searchKeyword().toLowerCase().trim();
+    if (!kw) return this.products();
+    return this.products().filter(p =>
+      p.title.toLowerCase().includes(kw) ||
+      p.category.name.toLowerCase().includes(kw) ||
+      p.brand.name.toLowerCase().includes(kw)
+    );
+  });
+
+  // ── Client-side pagination on filtered results ─────────────────────────────
+  totalFilteredPages = computed(() =>
+    Math.max(1, Math.ceil(this.filteredProducts().length / this.pageSize))
+  );
+
+  pagedProducts = computed(() => {
+    const page  = this.clientPage();
+    const start = (page - 1) * this.pageSize;
+    return this.filteredProducts().slice(start, start + this.pageSize);
+  });
+
   priceRanges = [
-    { label: 'Under 500',  max: 500 },
-    { label: 'Under 1K',   max: 1000 },
-    { label: 'Under 5K',   max: 5000 },
-    { label: 'Under 10K',  max: 10000 },
+    { label: 'Under 500', max: 500 },
+    { label: 'Under 1K',  max: 1000 },
+    { label: 'Under 5K',  max: 5000 },
+    { label: 'Under 10K', max: 10000 },
   ];
 
   sortOptions = [
@@ -70,16 +86,16 @@ export class ShopComponent implements OnInit {
   ngOnInit(): void {
     this.loadCategories();
     this.loadBrands();
-    // Pre-select category from query param (e.g. navigating from categories page)
     this.route.queryParams.subscribe(params => {
       if (params['category']) this.selectedCategories.set([params['category']]);
       if (params['brand'])    this.selectedBrands.set([params['brand']]);
       if (params['keyword'])  this.searchKeyword.set(params['keyword']);
-      this.loadProducts(1);
+      this.clientPage.set(1);
+      this.loadProducts();
     });
   }
 
-  // ── Load helpers ──────────────────────────────────────────────────────────
+  // ── Load ───────────────────────────────────────────────────────────────────
   private loadCategories(): void {
     this.categoryService.getAllCategories().subscribe({
       next: (res) => this.categories.set(res.data),
@@ -92,27 +108,22 @@ export class ShopComponent implements OnInit {
     });
   }
 
-  loadProducts(page = 1): void {
+  loadProducts(): void {
     this.isLoading.set(true);
-    this.currentPage.set(page);
 
-    const query: ProductsQueryParams = {
-      page,
-      limit: 12,
-    };
-
-    if (this.searchKeyword().trim()) query.keyword  = this.searchKeyword().trim();
-    if (this.sortBy())              query.sort      = this.sortBy();
+    const query: ProductsQueryParams = { page: 1, limit: 100 };
+    // ✅ Load up to 100 products — keyword filtered client-side
+    // page param removed from API call (we handle pagination client-side)
+    if (this.sortBy())                    query.sort     = this.sortBy();
     if (this.selectedCategories().length) query.category = this.selectedCategories().join(',');
     if (this.selectedBrands().length)     query.brand    = this.selectedBrands().join(',');
-    if (this.minPrice() !== null)   query.minPrice  = this.minPrice()!;
-    if (this.maxPrice() !== null)   query.maxPrice  = this.maxPrice()!;
+    if (this.minPrice() !== null)         query.minPrice = this.minPrice()!;
+    if (this.maxPrice() !== null)         query.maxPrice = this.maxPrice()!;
 
     this.productsService.getAllProducts(query).subscribe({
       next: (res) => {
-        this.products.set(res.data);
-        this.totalPages.set(res.metadata.numberOfPages);
-        this.totalResults.set(res.results);
+        this.products.set(res.data ?? []);
+        this.clientPage.set(1);   // reset to first page on new load
         this.isLoading.set(false);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       },
@@ -120,58 +131,38 @@ export class ShopComponent implements OnInit {
     });
   }
 
-  // ── Search ────────────────────────────────────────────────────────────────
+  // ── Search (client-side only) ─────────────────────────────────────────────
   onSearch(): void {
-    this.loadProducts(1);
+    // No API call needed — filteredProducts computed reacts instantly
   }
 
-  // ── Category filter ───────────────────────────────────────────────────────
+  // ── Filters ────────────────────────────────────────────────────────────────
   toggleCategory(id: string): void {
     this.selectedCategories.update(cats =>
       cats.includes(id) ? cats.filter(c => c !== id) : [...cats, id]
     );
-    this.loadProducts(1);
+    this.clientPage.set(1);
+    this.loadProducts();
   }
+  isCategorySelected(id: string): boolean { return this.selectedCategories().includes(id); }
 
-  isCategorySelected(id: string): boolean {
-    return this.selectedCategories().includes(id);
-  }
-
-  // ── Brand filter ──────────────────────────────────────────────────────────
   toggleBrand(id: string): void {
-    this.selectedBrands.update(brands =>
-      brands.includes(id) ? brands.filter(b => b !== id) : [...brands, id]
-    );
-    this.loadProducts(1);
+    this.selectedBrands.update(b => b.includes(id) ? b.filter(x => x !== id) : [...b, id]);
+    this.clientPage.set(1);
+    this.loadProducts();
   }
+  isBrandSelected(id: string): boolean { return this.selectedBrands().includes(id); }
 
-  isBrandSelected(id: string): boolean {
-    return this.selectedBrands().includes(id);
-  }
-
-  // ── Price quick filter ────────────────────────────────────────────────────
   setPriceRange(max: number): void {
-    // Toggle off if already selected
-    if (this.maxPrice() === max) {
-      this.maxPrice.set(null);
-    } else {
-      this.minPrice.set(null);
-      this.maxPrice.set(max);
-    }
-    this.loadProducts(1);
+    this.maxPrice.set(this.maxPrice() === max ? null : max);
+    if (this.maxPrice() !== null) this.minPrice.set(null);
+    this.clientPage.set(1);
+    this.loadProducts();
   }
+  isPriceRangeActive(max: number): boolean { return this.maxPrice() === max; }
 
-  isPriceRangeActive(max: number): boolean {
-    return this.maxPrice() === max;
-  }
+  onSortChange(value: string): void { this.sortBy.set(value); this.loadProducts(1); }
 
-  // ── Sort ──────────────────────────────────────────────────────────────────
-  onSortChange(value: string): void {
-    this.sortBy.set(value);
-    this.loadProducts(1);
-  }
-
-  // ── Reset filters ─────────────────────────────────────────────────────────
   resetFilters(): void {
     this.searchKeyword.set('');
     this.selectedCategories.set([]);
@@ -179,26 +170,26 @@ export class ShopComponent implements OnInit {
     this.minPrice.set(null);
     this.maxPrice.set(null);
     this.sortBy.set('');
-    this.loadProducts(1);
+    this.clientPage.set(1);
+    this.clientPage.set(1);
+    this.loadProducts();
   }
 
-  // ── Pagination ────────────────────────────────────────────────────────────
+  // ── Pagination (client-side on filteredProducts) ──────────────────────────
   goToPage(page: number): void {
-    if (page < 1 || page > this.totalPages()) return;
-    this.loadProducts(page);
+    if (page < 1 || page > this.totalFilteredPages()) return;
+    this.clientPage.set(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   get pageNumbers(): number[] {
-    const total = this.totalPages();
-    const current = this.currentPage();
+    const total = this.totalFilteredPages(), current = this.clientPage();
     const pages: number[] = [];
-    const start = Math.max(1, current - 2);
-    const end   = Math.min(total, current + 2);
-    for (let i = start; i <= end; i++) pages.push(i);
+    for (let i = Math.max(1, current - 2); i <= Math.min(total, current + 2); i++) pages.push(i);
     return pages;
   }
 
-  // ── Active filters count (for mobile badge) ───────────────────────────────
+  // ── Active filters count ───────────────────────────────────────────────────
   activeFiltersCount = computed(() =>
     this.selectedCategories().length +
     this.selectedBrands().length +

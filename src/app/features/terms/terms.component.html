@@ -1,0 +1,245 @@
+<!-- Page Header -->
+<app-page-header
+  title="Terms of Service"
+  icon="fa-file-contract"
+  breadcrumbLabel="Terms of Service"
+  subtitle="Last updated: {{ lastUpdated }}"
+  gradient="green"
+/>
+
+<div class="bg-gray-50 min-h-screen">
+  <div class="container mx-auto px-4 py-12">
+
+    <!-- Intro Banner (amber — different from privacy) -->
+    <div class="bg-gradient-to-r from-amber-50 to-amber-100/50 border border-amber-200 rounded-3xl p-6 sm:p-8 mb-12 shadow-sm">
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 rounded-2xl bg-amber-500 flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/25">
+          <i class="fa-solid fa-file-contract text-white text-xl"></i>
+        </div>
+        <div>
+          <h2 class="text-lg font-bold text-amber-900 mb-2">Important Notice</h2>
+          <p class="text-amber-800 leading-relaxed">
+            By accessing and using FreshCart, you accept and agree to be bound by the terms and
+            provisions of this agreement. Please read these terms carefully before using our services.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Articles Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+
+      <!-- ── Article 1: Acceptance of Terms ── -->
+      <section class="bg-white rounded-3xl border border-gray-100 p-6 sm:p-8 shadow-sm hover:shadow-lg hover:border-primary/20 transition-all duration-300 group">
+        <div class="flex items-start gap-4 mb-5">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-100 to-green-50 group-hover:from-primary group-hover:to-green-500 flex items-center justify-center shrink-0 transition-all duration-300">
+            <i class="fa-solid fa-handshake text-xl text-primary group-hover:text-white transition-colors duration-300"></i>
+          </div>
+          <div>
+            <span class="text-xs font-bold text-primary uppercase tracking-wider">Article 1</span>
+            <h2 class="text-xl font-bold text-gray-900">Acceptance of Terms</h2>
+          </div>
+        </div>
+        <div class="flex flex-col gap-3">
+          @for (item of [
+            { n: '1.1', text: 'By accessing or using the Service, you acknowledge that you have read, understood, and agree to be bound by these Terms.' },
+            { n: '1.2', text: 'If you do not agree to these Terms, you must not access or use the Service.' },
+            { n: '1.3', text: 'We reserve the right to modify these Terms at any time, and such modifications shall be effective immediately upon posting.' }
+          ]; track item.n) {
+            <div class="flex items-start gap-3 text-gray-600 leading-relaxed">
+              <span class="text-xs font-bold text-primary bg-green-50 px-2 py-0.5 rounded-md mt-0.5 shrink-0">{{ item.n }}</span>
+              <p class="text-sm">{{ item.text }}</p>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- ── Article 2: User Eligibility ── -->
+      <section class="bg-white rounded-3xl border border-gray-100 p-6 sm:p-8 shadow-sm hover:shadow-lg hover:border-primary/20 transition-all duration-300 group">
+        <div class="flex items-start gap-4 mb-5">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-100 to-green-50 group-hover:from-primary group-hover:to-green-500 flex items-center justify-center shrink-0 transition-all duration-300">
+            <i class="fa-solid fa-user-check text-xl text-primary group-hover:text-white transition-colors duration-300"></i>
+          </div>
+          <div>
+            <span class="text-xs font-bold text-primary uppercase tracking-wider">Article 2</span>
+            <h2 class="text-xl font-bold text-gray-900">User Eligibility</h2>
+          </div>
+        </div>
+        <div class="flex flex-col gap-3">
+          @for (item of [
+            { n: '2.1', text: 'The Service is intended for users who are at least eighteen (18) years of age.' },
+            { n: '2.2', text: 'By using the Service, you represent and warrant that you are of legal age to form a binding contract.' },
+            { n: '2.3', text: 'If you are accessing the Service on behalf of a legal entity, you represent that you have the authority to bind such entity.' }
+          ]; track item.n) {
+            <div class="flex items-start gap-3 text-gray-600 leading-relaxed">
+              <span class="text-xs font-bold text-primary bg-green-50 px-2 py-0.5 rounded-md mt-0.5 shrink-0">{{ item.n }}</span>
+              <p class="text-sm">{{ item.text }}</p>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- ── Article 3: Account Registration ── -->
+      <section class="bg-white rounded-3xl border border-gray-100 p-6 sm:p-8 shadow-sm hover:shadow-lg hover:border-primary/20 transition-all duration-300 group">
+        <div class="flex items-start gap-4 mb-5">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-100 to-green-50 group-hover:from-primary group-hover:to-green-500 flex items-center justify-center shrink-0 transition-all duration-300">
+            <i class="fa-solid fa-id-card text-xl text-primary group-hover:text-white transition-colors duration-300"></i>
+          </div>
+          <div>
+            <span class="text-xs font-bold text-primary uppercase tracking-wider">Article 3</span>
+            <h2 class="text-xl font-bold text-gray-900">Account Registration</h2>
+          </div>
+        </div>
+        <div class="flex flex-col gap-3">
+          @for (item of [
+            { n: '3.1', text: 'You may be required to create an account to access certain features of the Service.' },
+            { n: '3.2', text: 'You agree to provide accurate, current, and complete information during registration.' },
+            { n: '3.3', text: 'You are solely responsible for maintaining the confidentiality of your account credentials.' },
+            { n: '3.4', text: 'You agree to notify us immediately of any unauthorized use of your account.' }
+          ]; track item.n) {
+            <div class="flex items-start gap-3 text-gray-600 leading-relaxed">
+              <span class="text-xs font-bold text-primary bg-green-50 px-2 py-0.5 rounded-md mt-0.5 shrink-0">{{ item.n }}</span>
+              <p class="text-sm">{{ item.text }}</p>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- ── Article 4: Orders and Payments ── -->
+      <section class="bg-white rounded-3xl border border-gray-100 p-6 sm:p-8 shadow-sm hover:shadow-lg hover:border-primary/20 transition-all duration-300 group">
+        <div class="flex items-start gap-4 mb-5">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-100 to-green-50 group-hover:from-primary group-hover:to-green-500 flex items-center justify-center shrink-0 transition-all duration-300">
+            <i class="fa-solid fa-credit-card text-xl text-primary group-hover:text-white transition-colors duration-300"></i>
+          </div>
+          <div>
+            <span class="text-xs font-bold text-primary uppercase tracking-wider">Article 4</span>
+            <h2 class="text-xl font-bold text-gray-900">Orders and Payments</h2>
+          </div>
+        </div>
+        <div class="flex flex-col gap-3">
+          @for (item of [
+            { n: '4.1', text: 'All orders placed through the Service are subject to acceptance and availability.' },
+            { n: '4.2', text: 'Prices are subject to change without notice prior to order confirmation.' },
+            { n: '4.3', text: 'Payment must be made in full at the time of purchase through approved payment methods.' },
+            { n: '4.4', text: 'We reserve the right to refuse or cancel any order at our sole discretion.' }
+          ]; track item.n) {
+            <div class="flex items-start gap-3 text-gray-600 leading-relaxed">
+              <span class="text-xs font-bold text-primary bg-green-50 px-2 py-0.5 rounded-md mt-0.5 shrink-0">{{ item.n }}</span>
+              <p class="text-sm">{{ item.text }}</p>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- ── Article 5: Shipping and Delivery ── -->
+      <section class="bg-white rounded-3xl border border-gray-100 p-6 sm:p-8 shadow-sm hover:shadow-lg hover:border-primary/20 transition-all duration-300 group">
+        <div class="flex items-start gap-4 mb-5">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-100 to-green-50 group-hover:from-primary group-hover:to-green-500 flex items-center justify-center shrink-0 transition-all duration-300">
+            <i class="fa-solid fa-truck text-xl text-primary group-hover:text-white transition-colors duration-300"></i>
+          </div>
+          <div>
+            <span class="text-xs font-bold text-primary uppercase tracking-wider">Article 5</span>
+            <h2 class="text-xl font-bold text-gray-900">Shipping and Delivery</h2>
+          </div>
+        </div>
+        <div class="flex flex-col gap-3">
+          @for (item of [
+            { n: '5.1', text: 'Shipping times are estimates only and are not guaranteed.' },
+            { n: '5.2', text: 'Risk of loss and title for items purchased pass to you upon delivery to the carrier.' },
+            { n: '5.3', text: 'We are not responsible for delays caused by carriers, customs, or other factors beyond our control.' }
+          ]; track item.n) {
+            <div class="flex items-start gap-3 text-gray-600 leading-relaxed">
+              <span class="text-xs font-bold text-primary bg-green-50 px-2 py-0.5 rounded-md mt-0.5 shrink-0">{{ item.n }}</span>
+              <p class="text-sm">{{ item.text }}</p>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- ── Article 6: Returns and Refunds ── -->
+      <section class="bg-white rounded-3xl border border-gray-100 p-6 sm:p-8 shadow-sm hover:shadow-lg hover:border-primary/20 transition-all duration-300 group">
+        <div class="flex items-start gap-4 mb-5">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-100 to-green-50 group-hover:from-primary group-hover:to-green-500 flex items-center justify-center shrink-0 transition-all duration-300">
+            <i class="fa-solid fa-rotate-left text-xl text-primary group-hover:text-white transition-colors duration-300"></i>
+          </div>
+          <div>
+            <span class="text-xs font-bold text-primary uppercase tracking-wider">Article 6</span>
+            <h2 class="text-xl font-bold text-gray-900">Returns and Refunds</h2>
+          </div>
+        </div>
+        <div class="flex flex-col gap-3">
+          @for (item of [
+            { n: '6.1', text: 'Our return policy allows returns within 14 days of delivery for most items.' },
+            { n: '6.2', text: 'Products must be unused and in original packaging.' },
+            { n: '6.3', text: 'Refunds will be processed within 5-7 business days after receiving the returned item.' }
+          ]; track item.n) {
+            <div class="flex items-start gap-3 text-gray-600 leading-relaxed">
+              <span class="text-xs font-bold text-primary bg-green-50 px-2 py-0.5 rounded-md mt-0.5 shrink-0">{{ item.n }}</span>
+              <p class="text-sm">{{ item.text }}</p>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- ── Article 7: Limitation of Liability ── -->
+      <section class="bg-white rounded-3xl border border-gray-100 p-6 sm:p-8 shadow-sm hover:shadow-lg hover:border-primary/20 transition-all duration-300 group">
+        <div class="flex items-start gap-4 mb-5">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-100 to-green-50 group-hover:from-primary group-hover:to-green-500 flex items-center justify-center shrink-0 transition-all duration-300">
+            <i class="fa-solid fa-scale-balanced text-xl text-primary group-hover:text-white transition-colors duration-300"></i>
+          </div>
+          <div>
+            <span class="text-xs font-bold text-primary uppercase tracking-wider">Article 7</span>
+            <h2 class="text-xl font-bold text-gray-900">Limitation of Liability</h2>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          To the maximum extent permitted by applicable law, FreshCart shall not be liable for any
+          indirect, incidental, special, consequential, or punitive damages, or any loss of profits
+          or revenues, whether incurred directly or indirectly.
+        </p>
+      </section>
+
+      <!-- ── Article 8: Contact Us ── -->
+      <section class="bg-white rounded-3xl border border-gray-100 p-6 sm:p-8 shadow-sm hover:shadow-lg hover:border-primary/20 transition-all duration-300 group">
+        <div class="flex items-start gap-4 mb-5">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-100 to-green-50 group-hover:from-primary group-hover:to-green-500 flex items-center justify-center shrink-0 transition-all duration-300">
+            <i class="fa-solid fa-envelope text-xl text-primary group-hover:text-white transition-colors duration-300"></i>
+          </div>
+          <div>
+            <span class="text-xs font-bold text-primary uppercase tracking-wider">Article 8</span>
+            <h2 class="text-xl font-bold text-gray-900">Contact Us</h2>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          If you have any questions about these Terms, please contact us at
+          <a href="mailto:support@freshcart.com"
+            class="text-primary hover:text-green-700 font-semibold hover:underline">
+            support&#64;freshcart.com
+          </a>
+        </p>
+      </section>
+
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="mt-12 pt-8 border-t border-gray-200">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <a
+          routerLink="/"
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium transition-all duration-200"
+        >
+          <i class="fa-solid fa-arrow-left text-sm"></i>
+          Back to Home
+        </a>
+        <a
+          routerLink="/privacy"
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary hover:bg-green-700 text-white font-medium shadow-lg shadow-primary/25 transition-all duration-200"
+        >
+          View Privacy Policy
+          <i class="fa-solid fa-arrow-right text-sm"></i>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>

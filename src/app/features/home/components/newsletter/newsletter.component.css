@@ -1,0 +1,47 @@
+/* ── Initial hidden states ─────────────────────────────────────────────── */
+
+.nl-left {
+    opacity: 0;
+    transform: translateX(-48px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+  }
+  
+  .nl-right {
+    opacity: 0;
+    transform: translateX(48px);
+    transition: opacity 0.7s ease-out 0.2s, transform 0.7s ease-out 0.2s;
+  }
+  
+  .nl-pill {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  }
+  .nl-pill:nth-child(1) { transition-delay: 0.4s; }
+  .nl-pill:nth-child(2) { transition-delay: 0.55s; }
+  .nl-pill:nth-child(3) { transition-delay: 0.7s; }
+  
+  .nl-form {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s ease-out 0.6s, transform 0.5s ease-out 0.6s;
+  }
+  
+  .nl-app-btn {
+    opacity: 0;
+    transform: translateX(24px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  }
+  .nl-app-btn:nth-child(1) { transition-delay: 0.45s; }
+  .nl-app-btn:nth-child(2) { transition-delay: 0.6s; }
+  
+  /* ── All animate in when section enters viewport ──────────────────────── */
+  
+  .newsletter-visible .nl-left,
+  .newsletter-visible .nl-right,
+  .newsletter-visible .nl-pill,
+  .newsletter-visible .nl-form,
+  .newsletter-visible .nl-app-btn {
+    opacity: 1;
+    transform: none;
+  }

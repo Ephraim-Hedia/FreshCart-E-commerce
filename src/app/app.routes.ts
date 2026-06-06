@@ -84,6 +84,21 @@ export const routes: Routes = [
     ]
   },
   {
+    path: "contact",
+    loadComponent: () => import('./features/contact/contact.component').then(m => m.ContactComponent),
+    title: "Contact Us"
+  },
+  {
+    path: "privacy",
+    loadComponent: () => import('./features/privacy/privacy.component').then(m => m.PrivacyComponent),
+    title: "Privacy Policy"
+  },
+  {
+    path: "terms",
+    loadComponent: () => import('./features/terms/terms.component').then(m => m.TermsComponent),
+    title: "Terms of Service"
+  },
+  {
     path: "**",
     loadComponent: () => import('./features/not-found/not-found.component').then(m => m.NotFoundComponent),
     title: "Not Found Page"

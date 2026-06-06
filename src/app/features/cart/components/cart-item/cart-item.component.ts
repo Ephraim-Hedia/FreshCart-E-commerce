@@ -1,10 +1,11 @@
 import { Component, computed, input, output } from '@angular/core';
 import { CartItem } from '../../../../core/models/cart.interface';
+import { RouterLink, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-cart-item',
   standalone: true,
-  imports: [],
+  imports: [RouterLink,RouterModule],
   templateUrl: './cart-item.component.html',
 })
 export class CartItemComponent {

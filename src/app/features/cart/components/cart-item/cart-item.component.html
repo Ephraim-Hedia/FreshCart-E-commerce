@@ -7,11 +7,13 @@
     <!-- Image + In Stock badge -->
     <div class="relative shrink-0">
       <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-xl bg-gradient-to-br from-gray-50 via-white to-gray-100 p-3 border border-gray-100 overflow-hidden">
+        <a routerLink="/products/{{ item().product.id }}/{{ item().product.slug }}">
         <img
           [src]="item().product.imageCover"
           [alt]="item().product.title"
           class="w-full h-full object-contain"
         >
+        </a>
       </div>
       <div class="absolute -bottom-1 -right-1 bg-primary text-white text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
         <i class="fa-solid fa-check text-[8px]"></i> In Stock
@@ -23,7 +25,7 @@
 
       <!-- Title + Category + SKU -->
       <div class="mb-3">
-        <h3 class="font-semibold text-gray-900 leading-relaxed text-base sm:text-lg truncate">
+        <h3 routerLink="/products/{{ item().product.id }}/{{ item().product.slug }}" class="font-semibold text-gray-900 leading-relaxed text-base sm:text-lg truncate">
           {{ item().product.title }}
         </h3>
         <div class="flex items-center gap-2 mt-2 flex-wrap">

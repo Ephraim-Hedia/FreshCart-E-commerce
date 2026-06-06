@@ -23,7 +23,7 @@ export class ShopComponent implements OnInit {
   private readonly productsService = inject(ProductsService);
   private readonly categoryService = inject(CategoryService);
   private readonly brandService    = inject(BrandService);
-
+  
   // ── Data ───────────────────────────────────────────────────────────────────
   products   = signal<Product[]>([]);  // raw results from API
   categories = signal<Category[]>([]);

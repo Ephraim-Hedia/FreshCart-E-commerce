@@ -145,11 +145,13 @@
       <div class="flex-1 block lg:hidden"></div>
 
       <!-- 4. SUPPORT BADGE (desktop only) -->
-      <a routerLink="/contact" class="hidden lg:flex items-center gap-2 shrink-0 text-[#374151] hover:text-green-600 transition-colors">
-        <i class="fa-solid fa-headset text-green-600 text-xl"></i>
-        <div class="flex flex-col leading-none">
-          <span class="text-[10px] text-gray-400">Support</span>
-          <span class="text-xs font-semibold">24/7 Help</span>
+      <a routerLink="/contact" class="hidden lg:flex items-center gap-2 shrink-0 pr-3 mr-1 border-r border-gray-200 hover:opacity-80 transition-opacity">
+        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-headset text-primary"></i>
+        </div>
+        <div class="text-xs">
+          <div class="text-gray-400">Support</div>
+          <div class="font-semibold text-gray-700">24/7 Help</div>
         </div>
       </a>
 
@@ -236,7 +238,14 @@
       </div>
       }
       @else {
-        
+        <!-- Sign In button (desktop, when not logged in) -->
+        <a
+          routerLink="/login"
+          class="hidden lg:flex items-center gap-2 ml-1 px-5 py-2.5 rounded-full bg-primary hover:bg-green-700 text-white text-sm font-semibold transition-colors shadow-sm shrink-0"
+        >
+          <i class="fa-regular fa-user text-xs"></i>
+          Sign In
+        </a>
       }
 
       <!-- ===== MOBILE RIGHT SIDE ===== -->

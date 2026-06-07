@@ -9,8 +9,7 @@
         <!-- Each slide fills 100% width — track moves via translateX -->
         <div
           class="shrink-0 w-full h-full flex items-center"
-          [ngClass]="'bg-gradient-to-r ' + slide.gradient"
-          style="background-image: url('home-slider-1.d79601a8.png'); background-size: cover; background-position: center; background-blend-mode: multiply;"
+          [style.background]="slide.gradient + ', url(https://images.unsplash.com/photo-1542838132-92c53300491e?w=1400&q=80) center/cover'"
         >
           <div class="container mx-auto px-10">
             <h2

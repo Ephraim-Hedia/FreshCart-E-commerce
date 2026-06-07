@@ -1,0 +1,49 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master   # trigger on every push to master
+
+  # Allow manual trigger from Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: write   # needed to push to gh-pages branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js with npm cache
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Build as static SPA (no SSR) with correct base-href for GitHub Pages
+      - name: Build
+        run: npx ng build --configuration=production --output-mode=client --base-href /FreshCart-E-commerce/
+
+      # 5. Copy index.html → 404.html so Angular routing works on GitHub Pages
+      #    (GitHub Pages serves 404.html for unknown routes → Angular router takes over)
+      - name: Fix SPA routing
+        run: cp dist/Route_E-commerce/browser/index.html dist/Route_E-commerce/browser/404.html
+
+      # 6. Deploy browser build to gh-pages branch
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dist/Route_E-commerce/browser
+          publish_branch: gh-pages

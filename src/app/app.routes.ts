@@ -5,6 +5,7 @@ import { ProfileComponent } from './features/profile/profile.component';
 import { SettingsComponent } from './features/profile/components/settings/settings.component';
 import { AddressesComponent } from './features/profile/components/addresses/addresses.component';
 
+
 export const routes: Routes = [
   {
     path: "",
@@ -70,8 +71,10 @@ export const routes: Routes = [
   },
   {
     path: "products/:id/:slug",
+    
     loadComponent: () => import('./features/product-details/product-details.component').then(m => m.ProductDetailsComponent),
     title: "Product Details"
+    
   },
   {
     path: 'profile',

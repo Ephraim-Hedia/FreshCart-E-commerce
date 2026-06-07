@@ -1,346 +1,414 @@
 <div class="min-h-screen bg-gray-50">
-    <div class="container mx-auto px-4 py-8">
-  
-      <!-- Breadcrumb -->
-      <nav class="text-sm text-gray-500 mb-6 flex items-center gap-2">
-        <a routerLink="/" class="hover:text-primary">Home</a>
-        <span>/</span>
-        <a routerLink="/cart" class="hover:text-primary">Cart</a>
-        <span>/</span>
-        <span class="text-gray-900 font-medium">Checkout</span>
-      </nav>
-  
-      <!-- Page Header -->
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <div class="flex items-center gap-3 mb-1">
-            <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <i class="fa-solid fa-file-invoice text-white text-sm"></i>
-            </div>
-            <h1 class="text-2xl font-bold text-gray-900">Complete Your Order</h1>
+  <div class="container mx-auto px-4 py-8">
+
+    <!-- Breadcrumb -->
+    <nav class="text-sm text-gray-500 mb-6 flex items-center gap-2">
+      <a routerLink="/" class="hover:text-primary">Home</a>
+      <span>/</span>
+      <a routerLink="/cart" class="hover:text-primary">Cart</a>
+      <span>/</span>
+      <span class="text-gray-900 font-medium">Checkout</span>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <div class="flex items-center gap-3 mb-1">
+          <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-file-invoice text-white text-sm"></i>
           </div>
-          <p class="text-gray-500 text-sm ml-13">Review your items and complete your purchase</p>
+          <h1 class="text-2xl font-bold text-gray-900">Complete Your Order</h1>
         </div>
-        <a routerLink="/cart" class="text-primary text-sm hover:underline flex items-center gap-1">
-          <i class="fa-solid fa-arrow-left text-xs"></i>
-          Back to Cart
-        </a>
+        <p class="text-gray-500 text-sm ml-13">Review your items and complete your purchase</p>
       </div>
-  
-      <!-- Loading -->
-      @if (isLoading()) {
-        <div class="flex items-center justify-center py-24">
-          <i class="fa-solid fa-spinner fa-spin text-primary text-3xl"></i>
-        </div>
-      }
-  
-      <!-- Empty cart -->
-      @else if (!cartData()?.products?.length) {
-        <div class="text-center py-24">
-          <p class="text-gray-500 mb-4">Your cart is empty.</p>
-          <a routerLink="/shop" class="text-primary hover:underline font-medium">Start Shopping</a>
-        </div>
-      }
-  
-      @else {
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-  
-          <!-- ══ LEFT: Forms ══ -->
-          <div class="lg:col-span-2 flex flex-col gap-5">
-  
-            <!-- ── Shipping Address Section ── -->
-            <div class="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm">
-              <!-- Green header -->
-              <div class="bg-primary px-5 py-4">
-                <div class="flex items-center gap-2 text-white">
-                  <i class="fa-solid fa-house"></i>
-                  <span class="font-bold">Shipping Address</span>
-                </div>
-                <p class="text-green-100 text-xs mt-0.5">Where should we deliver your order?</p>
+      <a routerLink="/cart" class="text-primary text-sm hover:underline flex items-center gap-1">
+        <i class="fa-solid fa-arrow-left text-xs"></i>
+        Back to Cart
+      </a>
+    </div>
+
+    <!-- Loading -->
+    @if (isLoading()) {
+      <div class="flex items-center justify-center py-24">
+        <i class="fa-solid fa-spinner fa-spin text-primary text-3xl"></i>
+      </div>
+    }
+
+    <!-- Empty cart -->
+    @else if (!cartData()?.products?.length) {
+      <div class="text-center py-24">
+        <p class="text-gray-500 mb-4">Your cart is empty.</p>
+        <a routerLink="/shop" class="text-primary hover:underline font-medium">Start Shopping</a>
+      </div>
+    }
+
+    @else {
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- ══ LEFT: Forms ══ -->
+        <div class="lg:col-span-2 flex flex-col gap-5">
+
+          <!-- ── Shipping Address Section ── -->
+          <div class="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+            <!-- Green header -->
+            <div class="bg-primary px-5 py-4">
+              <div class="flex items-center gap-2 text-white">
+                <i class="fa-solid fa-house"></i>
+                <span class="font-bold">Shipping Address</span>
               </div>
-  
-              <div class="p-5 flex flex-col gap-4">
-  
-                <!-- Delivery Info Notice -->
-                <div class="flex items-start gap-2 p-3 bg-blue-50 border border-blue-100 rounded-lg">
-                  <i class="fa-solid fa-circle-info text-blue-500 mt-0.5 shrink-0"></i>
-                  <div>
-                    <p class="text-sm font-medium text-blue-700">Delivery Information</p>
-                    <p class="text-xs text-blue-600 mt-0.5">Please ensure your address is accurate for smooth delivery</p>
+              <p class="text-green-100 text-xs mt-0.5">Where should we deliver your order?</p>
+            </div>
+
+            <div class="p-5 flex flex-col gap-4">
+
+              <!-- ── Saved Addresses ── -->
+              @if (savedAddresses().length > 0) {
+                <div class="flex flex-col gap-3">
+                  <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-bookmark text-primary text-sm"></i>
+                    <span class="font-semibold text-gray-800">Saved Addresses</span>
                   </div>
+                  <p class="text-sm text-gray-500">Select a saved address or enter a new one below</p>
+
+                  <!-- Address cards -->
+                  @for (address of savedAddresses(); track address._id) {
+                    <button
+                      type="button"
+                      (click)="selectSavedAddress(address)"
+                      class="cursor-pointer w-full p-4 rounded-xl border-2 text-left transition-all duration-200"
+                      [class.border-primary]="isAddressSelected(address)"
+                      [class.bg-green-50]="isAddressSelected(address)"
+                      [class.border-gray-200]="!isAddressSelected(address)"
+                      [class.hover:border-primary]="!isAddressSelected(address)"
+                      [class.hover:bg-gray-50]="!isAddressSelected(address)"
+                    >
+                      <div class="flex items-start gap-3">
+                        <div
+                          class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors"
+                          [class.bg-primary]="isAddressSelected(address)"
+                          [class.text-white]="isAddressSelected(address)"
+                          [class.bg-gray-100]="!isAddressSelected(address)"
+                          [class.text-gray-500]="!isAddressSelected(address)"
+                        >
+                          <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="font-semibold text-gray-900">{{ address.name }}</p>
+                          <p class="text-sm text-gray-600 mt-0.5 truncate">{{ address.details }}</p>
+                          <div class="flex items-center gap-4 mt-2 text-xs text-gray-500">
+                            <span class="flex items-center gap-1">
+                              <i class="fa-solid fa-phone text-[10px]"></i>
+                              {{ address.phone }}
+                            </span>
+                            <span class="flex items-center gap-1">
+                              <i class="fa-solid fa-city text-[10px]"></i>
+                              {{ address.city }}
+                            </span>
+                          </div>
+                        </div>
+                        @if (isAddressSelected(address)) {
+                          <i class="fa-solid fa-circle-check text-primary text-lg shrink-0 mt-1"></i>
+                        }
+                      </div>
+                    </button>
+                  }
+
+                  <!-- Use a different address -->
+                  <button
+                    type="button"
+                    (click)="openManualForm()"
+                    class="cursor-pointer w-full p-4 rounded-xl border-2 border-dashed text-left transition-all duration-200"
+                    [class.border-primary]="showManualForm()"
+                    [class.bg-green-50]="showManualForm()"
+                    [class.border-gray-300]="!showManualForm()"
+                    [class.hover:border-primary]="!showManualForm()"
+                    [class.hover:bg-gray-50]="!showManualForm()"
+                  >
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
+                        [class.bg-primary]="showManualForm()"
+                        [class.text-white]="showManualForm()"
+                        [class.bg-gray-100]="!showManualForm()"
+                        [class.text-gray-500]="!showManualForm()"
+                      >
+                        <i class="fa-solid fa-plus"></i>
+                      </div>
+                      <div>
+                        <p class="font-semibold"
+                          [class.text-primary]="showManualForm()"
+                          [class.text-gray-700]="!showManualForm()">
+                          Use a different address
+                        </p>
+                        <p class="text-xs text-gray-500 mt-0.5">Enter a new shipping address manually</p>
+                      </div>
+                    </div>
+                  </button>
                 </div>
-  
-                <!-- Address form -->
+              }
+
+              <!-- Delivery Info Notice -->
+              <div class="flex items-start gap-3 p-4 bg-blue-50 border border-blue-100 rounded-xl">
+                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                  <i class="fa-solid fa-circle-info text-blue-600 text-sm"></i>
+                </div>
+                <div>
+                  <p class="text-sm text-blue-800 font-medium">Delivery Information</p>
+                  <p class="text-xs text-blue-600 mt-0.5">Please ensure your address is accurate for smooth delivery</p>
+                </div>
+              </div>
+
+              <!-- ── Manual Address Form ── -->
+              @if (showManualForm()) {
                 <form [formGroup]="addressForm" (ngSubmit)="placeOrder()" novalidate class="flex flex-col gap-4">
-  
+
                   <!-- City -->
                   <div class="flex flex-col gap-1.5">
-                    <label class="text-sm font-medium text-gray-700">
+                    <label class="text-sm font-semibold text-gray-700">
                       City <span class="text-red-500">*</span>
                     </label>
                     <div class="relative">
-                      <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
-                        <i class="fa-solid fa-building text-gray-400 text-sm"></i>
+                      <div class="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <i class="fa-solid fa-city text-gray-500 text-sm"></i>
                       </div>
                       <input
                         type="text"
                         formControlName="city"
                         placeholder="e.g. Cairo, Alexandria, Giza"
-                        class="w-full pl-10 pr-4 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                        class="w-full pl-14 pr-4 py-3.5 border-2 rounded-xl focus:outline-none transition-all text-sm"
                         [class.border-red-400]="cityCtrl.invalid && cityCtrl.touched"
-                        [class.border-gray-300]="!(cityCtrl.invalid && cityCtrl.touched)"
+                        [class.border-gray-200]="!(cityCtrl.invalid && cityCtrl.touched)"
+                        [class.focus:border-primary]="!(cityCtrl.invalid && cityCtrl.touched)"
                       >
                     </div>
                     @if (cityCtrl.invalid && cityCtrl.touched) {
-                      <p class="text-xs text-red-500 flex items-center gap-1">
-                        <i class="fa-solid fa-circle-exclamation"></i>
-                        City is required
-                      </p>
+                      <p class="text-xs text-red-500"><i class="fa-solid fa-circle-exclamation mr-1"></i>City is required</p>
                     }
                   </div>
-  
+
                   <!-- Street Address -->
                   <div class="flex flex-col gap-1.5">
-                    <label class="text-sm font-medium text-gray-700">
+                    <label class="text-sm font-semibold text-gray-700">
                       Street Address <span class="text-red-500">*</span>
                     </label>
                     <div class="relative">
-                      <div class="absolute top-3 left-0 flex items-center pl-3.5 pointer-events-none">
-                        <i class="fa-solid fa-location-dot text-gray-400 text-sm"></i>
+                      <div class="absolute left-4 top-4 w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <i class="fa-solid fa-location-dot text-gray-500 text-sm"></i>
                       </div>
                       <textarea
                         formControlName="details"
                         placeholder="Street name, building number, floor, apartment..."
                         rows="3"
-                        class="w-full pl-10 pr-4 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors resize-none"
+                        class="w-full pl-14 pr-4 py-3.5 border-2 rounded-xl focus:outline-none transition-all resize-none text-sm"
                         [class.border-red-400]="detailsCtrl.invalid && detailsCtrl.touched"
-                        [class.border-gray-300]="!(detailsCtrl.invalid && detailsCtrl.touched)"
+                        [class.border-gray-200]="!(detailsCtrl.invalid && detailsCtrl.touched)"
                       ></textarea>
                     </div>
                     @if (detailsCtrl.invalid && detailsCtrl.touched) {
-                      <p class="text-xs text-red-500 flex items-center gap-1">
-                        <i class="fa-solid fa-circle-exclamation"></i>
-                        Street address is required
-                      </p>
+                      <p class="text-xs text-red-500"><i class="fa-solid fa-circle-exclamation mr-1"></i>Street address is required</p>
                     }
                   </div>
-  
+
                   <!-- Phone -->
                   <div class="flex flex-col gap-1.5">
-                    <label class="text-sm font-medium text-gray-700">
+                    <label class="text-sm font-semibold text-gray-700">
                       Phone Number <span class="text-red-500">*</span>
                     </label>
                     <div class="relative">
-                      <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
-                        <i class="fa-solid fa-phone text-gray-400 text-sm"></i>
+                      <div class="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <i class="fa-solid fa-phone text-gray-500 text-sm"></i>
                       </div>
                       <input
                         type="tel"
                         formControlName="phone"
                         placeholder="01xxxxxxxxx"
-                        class="w-full pl-10 pr-4 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                        class="w-full pl-14 pr-32 py-3.5 border-2 rounded-xl focus:outline-none transition-all text-sm"
                         [class.border-red-400]="phoneCtrl.invalid && phoneCtrl.touched"
-                        [class.border-gray-300]="!(phoneCtrl.invalid && phoneCtrl.touched)"
+                        [class.border-gray-200]="!(phoneCtrl.invalid && phoneCtrl.touched)"
                       >
-                      <div class="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none">
-                        <span class="text-xs text-gray-400">Egyptian numbers only</span>
-                      </div>
+                      <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400">Egyptian numbers only</span>
                     </div>
                     @if (phoneCtrl.invalid && phoneCtrl.touched) {
-                      <p class="text-xs text-red-500 flex items-center gap-1">
-                        <i class="fa-solid fa-circle-exclamation"></i>
-                        Please enter a valid Egyptian phone number (01xxxxxxxxx)
-                      </p>
+                      <p class="text-xs text-red-500"><i class="fa-solid fa-circle-exclamation mr-1"></i>Valid Egyptian phone number required (01xxxxxxxxx)</p>
                     }
                   </div>
-  
+
                 </form>
-              </div>
+              }
+
             </div>
-  
-            <!-- ── Payment Method Section ── -->
-            <div class="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm">
-              <!-- Green header -->
-              <div class="bg-primary px-5 py-4">
-                <div class="flex items-center gap-2 text-white">
-                  <i class="fa-solid fa-wallet"></i>
-                  <span class="font-bold">Payment Method</span>
-                </div>
-                <p class="text-green-100 text-xs mt-0.5">Choose how you'd like to pay</p>
+          </div>
+
+          <!-- ── Payment Method Section ── -->
+          <div class="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+            <div class="bg-primary px-5 py-4">
+              <div class="flex items-center gap-2 text-white">
+                <i class="fa-solid fa-wallet"></i>
+                <span class="font-bold">Payment Method</span>
               </div>
-  
-              <div class="p-5 flex flex-col gap-3">
-  
-                <!-- Cash on Delivery -->
-                <button
-                  type="button"
-                  (click)="paymentMethod.set('cash')"
-                  class="cursor-pointer w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all text-left"
+              <p class="text-green-100 text-xs mt-0.5">Choose how you'd like to pay</p>
+            </div>
+
+            <div class="p-5 flex flex-col gap-3">
+
+              <!-- Cash on Delivery -->
+              <button
+                type="button"
+                (click)="paymentMethod.set('cash')"
+                class="cursor-pointer w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all text-left"
+                [class.border-primary]="paymentMethod() === 'cash'"
+                [class.bg-green-50]="paymentMethod() === 'cash'"
+                [class.border-gray-200]="paymentMethod() !== 'cash'"
+              >
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                  [class.bg-primary]="paymentMethod() === 'cash'"
+                  [class.bg-gray-100]="paymentMethod() !== 'cash'">
+                  <i class="fa-solid fa-money-bill-wave text-lg"
+                    [class.text-white]="paymentMethod() === 'cash'"
+                    [class.text-gray-400]="paymentMethod() !== 'cash'"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="font-semibold text-gray-900 text-sm">Cash on Delivery</p>
+                  <p class="text-xs text-gray-500 mt-0.5">Pay when your order arrives at your doorstep</p>
+                </div>
+                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
                   [class.border-primary]="paymentMethod() === 'cash'"
-                  [class.bg-green-50]="paymentMethod() === 'cash'"
-                  [class.border-gray-200]="paymentMethod() !== 'cash'"
-                  [class.bg-white]="paymentMethod() !== 'cash'"
-                >
-                  <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                    [class.bg-primary]="paymentMethod() === 'cash'"
-                    [class.bg-gray-100]="paymentMethod() !== 'cash'">
-                    <i class="fa-solid fa-money-bill-wave text-lg"
-                      [class.text-white]="paymentMethod() === 'cash'"
-                      [class.text-gray-400]="paymentMethod() !== 'cash'">
-                    </i>
+                  [class.border-gray-300]="paymentMethod() !== 'cash'">
+                  @if (paymentMethod() === 'cash') {
+                    <div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+                  }
+                </div>
+              </button>
+
+              <!-- Pay Online -->
+              <button
+                type="button"
+                (click)="paymentMethod.set('online')"
+                class="cursor-pointer w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all text-left"
+                [class.border-primary]="paymentMethod() === 'online'"
+                [class.bg-green-50]="paymentMethod() === 'online'"
+                [class.border-gray-200]="paymentMethod() !== 'online'"
+              >
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                  [class.bg-primary]="paymentMethod() === 'online'"
+                  [class.bg-gray-100]="paymentMethod() !== 'online'">
+                  <i class="fa-solid fa-credit-card text-lg"
+                    [class.text-white]="paymentMethod() === 'online'"
+                    [class.text-gray-400]="paymentMethod() !== 'online'"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="font-semibold text-gray-900 text-sm">Pay Online</p>
+                  <p class="text-xs text-gray-500 mt-0.5">Secure payment with Credit/Debit Card via Stripe</p>
+                  <div class="flex items-center gap-1.5 mt-2">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa" class="h-5">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="h-5">
                   </div>
-                  <div class="flex-1">
-                    <p class="font-semibold text-gray-900 text-sm">Cash on Delivery</p>
-                    <p class="text-xs text-gray-500 mt-0.5">Pay when your order arrives at your doorstep</p>
-                  </div>
-                  <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
-                    [class.border-primary]="paymentMethod() === 'cash'"
-                    [class.border-gray-300]="paymentMethod() !== 'cash'">
-                    @if (paymentMethod() === 'cash') {
-                      <div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
-                    }
-                  </div>
-                </button>
-  
-                <!-- Pay Online -->
-                <button
-                  type="button"
-                  (click)="paymentMethod.set('online')"
-                  class="cursor-pointer w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all text-left"
+                </div>
+                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
                   [class.border-primary]="paymentMethod() === 'online'"
-                  [class.bg-green-50]="paymentMethod() === 'online'"
-                  [class.border-gray-200]="paymentMethod() !== 'online'"
-                  [class.bg-white]="paymentMethod() !== 'online'"
-                >
-                  <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                    [class.bg-primary]="paymentMethod() === 'online'"
-                    [class.bg-gray-100]="paymentMethod() !== 'online'">
-                    <i class="fa-solid fa-credit-card text-lg"
-                      [class.text-white]="paymentMethod() === 'online'"
-                      [class.text-gray-400]="paymentMethod() !== 'online'">
-                    </i>
-                  </div>
-                  <div class="flex-1">
-                    <p class="font-semibold text-gray-900 text-sm">Pay Online</p>
-                    <p class="text-xs text-gray-500 mt-0.5">Secure payment with Credit/Debit Card via Stripe</p>
-                    <div class="flex items-center gap-1.5 mt-2">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa" class="h-5">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="h-5">
-                    </div>
-                  </div>
-                  <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
-                    [class.border-primary]="paymentMethod() === 'online'"
-                    [class.border-gray-300]="paymentMethod() !== 'online'">
-                    @if (paymentMethod() === 'online') {
-                      <div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
-                    }
-                  </div>
-                </button>
-  
-                <!-- Secure & Encrypted notice -->
-                <div class="flex items-center gap-2 p-3 bg-green-50 border border-green-100 rounded-lg">
-                  <i class="fa-solid fa-shield-halved text-primary shrink-0"></i>
-                  <div>
-                    <p class="text-xs font-semibold text-primary">Secure & Encrypted</p>
-                    <p class="text-xs text-green-600 mt-0.5">Your payment info is protected with 256-bit SSL encryption</p>
-                  </div>
-                </div>
-  
-              </div>
-            </div>
-          </div>
-  
-          <!-- ══ RIGHT: Order Summary ══ -->
-          <div class="lg:col-span-1">
-            <div class="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm sticky top-24">
-  
-              <!-- Green header -->
-              <div class="bg-primary px-5 py-4">
-                <div class="flex items-center gap-2 text-white">
-                  <i class="fa-solid fa-cart-shopping"></i>
-                  <span class="font-bold">Order Summary</span>
-                </div>
-                <p class="text-green-100 text-xs mt-0.5">{{ itemsCount }} items</p>
-              </div>
-  
-              <div class="p-5 flex flex-col gap-4">
-  
-                <!-- Items list -->
-                <div class="flex flex-col gap-3 max-h-60 overflow-y-auto pr-1">
-                  @for (item of cartData()!.products; track item._id) {
-                    <div class="flex items-center gap-3">
-                      <img
-                        [src]="item.product.imageCover"
-                        [alt]="item.product.title"
-                        class="w-12 h-12 object-contain rounded-lg border border-gray-100 bg-gray-50 shrink-0"
-                      >
-                      <div class="flex-1 min-w-0">
-                        <p class="text-xs font-medium text-gray-900 truncate">{{ item.product.title }}</p>
-                        <p class="text-xs text-gray-400">{{ item.count }} × {{ item.price }} EGP</p>
-                      </div>
-                      <span class="text-sm font-semibold text-gray-900 shrink-0">
-                        {{ item.count * item.price }}
-                      </span>
-                    </div>
+                  [class.border-gray-300]="paymentMethod() !== 'online'">
+                  @if (paymentMethod() === 'online') {
+                    <div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
                   }
                 </div>
-  
-                <!-- Price breakdown -->
-                <div class="border-t border-gray-100 pt-3 flex flex-col gap-2">
-                  <div class="flex justify-between text-sm">
-                    <span class="text-gray-500">Subtotal</span>
-                    <span class="font-medium text-gray-900">{{ subtotal }} EGP</span>
-                  </div>
-                  <div class="flex justify-between text-sm">
-                    <span class="text-gray-500 flex items-center gap-1">
-                      <i class="fa-solid fa-truck text-xs text-primary"></i>
-                      Shipping
-                    </span>
-                    <span class="font-semibold text-primary">FREE</span>
-                  </div>
-                  <div class="flex justify-between font-bold text-base pt-1 border-t border-gray-100 mt-1">
-                    <span class="text-gray-900">Total</span>
-                    <span class="text-gray-900">{{ subtotal }} <span class="text-sm font-normal text-gray-400">EGP</span></span>
-                  </div>
+              </button>
+
+              <!-- Secure notice -->
+              <div class="flex items-center gap-2 p-3 bg-green-50 border border-green-100 rounded-lg">
+                <i class="fa-solid fa-shield-halved text-primary shrink-0"></i>
+                <div>
+                  <p class="text-xs font-semibold text-primary">Secure & Encrypted</p>
+                  <p class="text-xs text-green-600 mt-0.5">Your payment info is protected with 256-bit SSL encryption</p>
                 </div>
-  
-                <!-- Place Order button -->
-                <button
-                  type="button"
-                  (click)="placeOrder()"
-                  [disabled]="isPlacingOrder() || addressForm.invalid"
-                  class="cursor-pointer w-full py-3 bg-primary hover:bg-green-700 disabled:bg-green-400 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
-                >
-                  @if (isPlacingOrder()) {
-                    <i class="fa-solid fa-spinner fa-spin"></i>
-                    Placing Order...
-                  } @else {
-                    <i class="fa-solid fa-lock text-sm"></i>
-                    Place Order
-                  }
-                </button>
-  
-                <!-- Trust badges -->
-                <div class="flex items-center justify-center gap-4 text-xs text-gray-400">
-                  <span class="flex items-center gap-1">
-                    <i class="fa-solid fa-shield-halved text-primary text-xs"></i>
-                    Secure
-                  </span>
-                  <span class="flex items-center gap-1">
-                    <i class="fa-solid fa-truck text-primary text-xs"></i>
-                    Fast Delivery
-                  </span>
-                  <span class="flex items-center gap-1">
-                    <i class="fa-solid fa-rotate-left text-orange-400 text-xs"></i>
-                    Easy Returns
-                  </span>
-                </div>
-  
               </div>
+
             </div>
           </div>
-  
         </div>
-      }
-    </div>
+
+        <!-- ══ RIGHT: Order Summary ══ -->
+        <div class="lg:col-span-1">
+          <div class="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm sticky top-24">
+
+            <div class="bg-primary px-5 py-4">
+              <div class="flex items-center gap-2 text-white">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span class="font-bold">Order Summary</span>
+              </div>
+              <p class="text-green-100 text-xs mt-0.5">{{ itemsCount }} items</p>
+            </div>
+
+            <div class="p-5 flex flex-col gap-4">
+
+              <!-- Items -->
+              <div class="flex flex-col gap-3 max-h-60 overflow-y-auto pr-1">
+                @for (item of cartData()!.products; track item._id) {
+                  <div class="flex items-center gap-3">
+                    <img
+                      [src]="item.product.imageCover"
+                      [alt]="item.product.title"
+                      class="w-12 h-12 object-contain rounded-lg border border-gray-100 bg-gray-50 shrink-0"
+                    >
+                    <div class="flex-1 min-w-0">
+                      <p class="text-xs font-medium text-gray-900 truncate">{{ item.product.title }}</p>
+                      <p class="text-xs text-gray-400">{{ item.count }} × {{ item.price }} EGP</p>
+                    </div>
+                    <span class="text-sm font-semibold text-gray-900 shrink-0">{{ item.count * item.price }}</span>
+                  </div>
+                }
+              </div>
+
+              <!-- Price breakdown -->
+              <div class="border-t border-gray-100 pt-3 flex flex-col gap-2">
+                <div class="flex justify-between text-sm">
+                  <span class="text-gray-500">Subtotal</span>
+                  <span class="font-medium text-gray-900">{{ subtotal }} EGP</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span class="text-gray-500 flex items-center gap-1">
+                    <i class="fa-solid fa-truck text-xs text-primary"></i>
+                    Shipping
+                  </span>
+                  <span class="font-semibold text-primary">FREE</span>
+                </div>
+                <div class="flex justify-between font-bold text-base pt-1 border-t border-gray-100 mt-1">
+                  <span class="text-gray-900">Total</span>
+                  <span class="text-gray-900">{{ subtotal }} <span class="text-sm font-normal text-gray-400">EGP</span></span>
+                </div>
+              </div>
+
+              <!-- Place Order -->
+              <button
+                type="button"
+                (click)="placeOrder()"
+                [disabled]="isPlacingOrder() || !canPlaceOrder"
+                class="cursor-pointer w-full py-3 bg-primary hover:bg-green-700 disabled:bg-green-400 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+              >
+                @if (isPlacingOrder()) {
+                  <i class="fa-solid fa-spinner fa-spin"></i> Placing Order...
+                } @else {
+                  <i class="fa-solid fa-lock text-sm"></i> Place Order
+                }
+              </button>
+
+              <!-- Trust badges -->
+              <div class="flex items-center justify-center gap-4 text-xs text-gray-400">
+                <span class="flex items-center gap-1">
+                  <i class="fa-solid fa-shield-halved text-primary text-xs"></i> Secure
+                </span>
+                <span class="flex items-center gap-1">
+                  <i class="fa-solid fa-truck text-primary text-xs"></i> Fast Delivery
+                </span>
+                <span class="flex items-center gap-1">
+                  <i class="fa-solid fa-rotate-left text-orange-400 text-xs"></i> Easy Returns
+                </span>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    }
   </div>
+</div>

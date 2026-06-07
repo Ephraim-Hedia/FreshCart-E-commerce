@@ -1,0 +1,82 @@
+<div class="relative overflow-hidden h-[400px]">
+
+    <!-- ── Slides Track ── -->
+    <div
+      class="slides-track flex h-full"
+      [style.transform]="'translateX(-' + currentIndex() * 100 + '%)'"
+    >
+      @for (slide of slides; track slide.title) {
+        <!-- Each slide fills 100% width — track moves via translateX -->
+        <div
+          class="shrink-0 w-full h-full flex items-center"
+          [ngClass]="'bg-gradient-to-r ' + slide.gradient"
+          style="background-image: url('home-slider-1.d79601a8.png'); background-size: cover; background-position: center; background-blend-mode: multiply;"
+        >
+          <div class="container mx-auto px-10">
+            <h2
+              class="hero-text delay-1 text-white text-3xl font-bold mb-4 max-w-96"
+              [class.animate-in]="isAnimating()"
+            >
+              {{ slide.title }}
+            </h2>
+  
+            <p
+              class="hero-text delay-2 text-white/90 text-lg mb-6"
+              [class.animate-in]="isAnimating()"
+            >
+              {{ slide.subtitle }}
+            </p>
+  
+            <div
+              class="hero-text delay-3 flex gap-3 flex-wrap"
+              [class.animate-in]="isAnimating()"
+            >
+              <a
+                [routerLink]="slide.primaryBtn.link"
+                class="bg-white border-2 border-white/50 text-green-600 inline-block px-6 py-2.5 rounded-lg font-semibold hover:scale-105 transition-transform"
+              >
+                {{ slide.primaryBtn.label }}
+              </a>
+              <a
+                [routerLink]="slide.secondaryBtn.link"
+                class="bg-transparent border-2 border-white/50 text-white inline-block px-6 py-2.5 rounded-lg font-semibold hover:scale-105 transition-transform"
+              >
+                {{ slide.secondaryBtn.label }}
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  
+    <!-- ── Prev Button ── -->
+    <button
+      type="button"
+      (click)="prev()"
+      class="cursor-pointer custom-prev absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-green-500 hover:text-green-600 rounded-full w-12 h-12 hidden md:flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
+    >
+      <i class="fa-solid fa-chevron-left text-lg"></i>
+    </button>
+  
+    <!-- ── Next Button ── -->
+    <button
+      type="button"
+      (click)="next()"
+      class="cursor-pointer custom-next absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-green-500 hover:text-green-600 rounded-full w-12 h-12 hidden md:flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
+    >
+      <i class="fa-solid fa-chevron-right text-lg"></i>
+    </button>
+  
+    <!-- ── Dot Pagination ── -->
+    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
+      @for (slide of slides; track slide.title; let i = $index) {
+        <button
+          type="button"
+          (click)="goTo(i)"
+          class="cursor-pointer dot"
+          [class.active]="i === currentIndex()"
+        ></button>
+      }
+    </div>
+  
+  </div>

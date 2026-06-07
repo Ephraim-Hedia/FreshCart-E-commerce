@@ -8,10 +8,11 @@ import { ProductsSectionComponent } from './components/products-section/products
 import { DealBannersComponent } from './components/deal-banners/deal-banners.component';
 import { FeaturesSectionComponent } from '../../shared/ui/features-section/features-section.component';
 import { NewsletterComponent } from './components/newsletter/newsletter.component';
+import { HeroBannerComponent } from './components/hero-banner/hero-banner.component';
 
 @Component({
   selector: 'app-home',
-  imports: [CategoriesSectionComponent,ProductsSectionComponent,DealBannersComponent,FeaturesSectionComponent,NewsletterComponent],
+  imports: [CategoriesSectionComponent,ProductsSectionComponent,DealBannersComponent,FeaturesSectionComponent,NewsletterComponent,HeroBannerComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })

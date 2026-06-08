@@ -21,7 +21,7 @@ export class OrderService {
   }
 
   checkoutSession(cartId:string,shippingAddress:object):Observable<any>{
-    return this.httpClient.post(`${environment.baseUrl}/api/v1/orders/checkout-session/${cartId}?url=http://localhost:4200`,shippingAddress)
+    return this.httpClient.post(`${environment.baseUrl}/api/v1/orders/checkout-session/${cartId}?url=${environment.appUrl}`,shippingAddress)
   }
 
   // shipping address object sample

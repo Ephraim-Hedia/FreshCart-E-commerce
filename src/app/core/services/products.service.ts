@@ -23,14 +23,24 @@ export class ProductsService {
 
   getAllProducts(query: ProductsQueryParams = {}): Observable<ProductsResponse> {
     let params = new HttpParams();
-    if (query.keyword)  params = params.set('keyword',          query.keyword);
-    if (query.page)     params = params.set('page',             query.page);
-    if (query.limit)    params = params.set('limit',            query.limit);
-    if (query.sort)     params = params.set('sort',             query.sort);
-    if (query.category) params = params.set('category[in]',     query.category);
-    if (query.brand)    params = params.set('brand[in]',        query.brand);
-    if (query.minPrice) params = params.set('price[gte]',       query.minPrice);
-    if (query.maxPrice) params = params.set('price[lte]',       query.maxPrice);
+    if (query.keyword)  params = params.set('keyword',    query.keyword);
+    if (query.page)     params = params.set('page',        query.page);
+    if (query.limit)    params = params.set('limit',       query.limit);
+    if (query.sort)     params = params.set('sort',        query.sort);
+    if (query.minPrice) params = params.set('price[gte]',  query.minPrice);
+    if (query.maxPrice) params = params.set('price[lte]',  query.maxPrice);
+
+    // Send each ID as a separate param → category[in][]=id1&category[in][]=id2
+    if (query.category) {
+      query.category.split(',').forEach(id => {
+        params = params.append('category[in][]', id.trim());
+      });
+    }
+    if (query.brand) {
+      query.brand.split(',').forEach(id => {
+        params = params.append('brand[in][]', id.trim());
+      });
+    }
 
     return this.httpClient.get<ProductsResponse>(
       `${environment.baseUrl}/api/v1/products`, { params }

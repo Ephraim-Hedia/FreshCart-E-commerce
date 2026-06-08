@@ -1,3 +1,9 @@
+/* ── Prevent horizontal scroll during animation ──────────────────────── */
+:host {
+  display: block;
+  overflow-x: hidden;
+}
+
 /* ── Initial hidden states ─────────────────────────────────────────────── */
 
 .nl-left {

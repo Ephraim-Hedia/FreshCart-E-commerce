@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, OnDestroy, PLATFORM_ID, QueryList, ViewChildren } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 interface DealBanner {
@@ -23,6 +24,8 @@ interface DealBanner {
   styleUrl: './deal-banners.component.css',
 })
 export class DealBannersComponent implements AfterViewInit, OnDestroy {
+
+  private readonly platformId = inject(PLATFORM_ID);
 
   @ViewChildren('bannerCard') bannerCards!: QueryList<ElementRef>;
   private observer!: IntersectionObserver;
@@ -57,11 +60,13 @@ export class DealBannersComponent implements AfterViewInit, OnDestroy {
   ];
 
   ngAfterViewInit(): void {
+    // IntersectionObserver is browser-only — skip during SSR pre-rendering
+    if (!isPlatformBrowser(this.platformId)) return;
+
     this.observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry, i) => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            // Small staggered delay per card
             const delay = (entry.target as HTMLElement).dataset['delay'] ?? '0';
             setTimeout(() => {
               entry.target.classList.add('banner-visible');

@@ -306,7 +306,7 @@
 
     <!-- Search -->
     <div class="px-4 py-3 border-b border-gray-100">
-      <form (submit)="onSearch()" class="relative">
+      <form (submit)="onSearch(); closeMobileMenu();" class="relative">
         <input
           type="search"
           [(ngModel)]="searchQuery"
@@ -353,7 +353,7 @@
     <!-- User section -->
     <div class="px-2 py-2 mt-auto">
       @if (isLoggedIn()) {
-        <button routerLink="/profile" (click)="closeMobileMenu()" class="cursor-pointer hover:bg-green-100 flex items-center gap-3 px-3 py-2.5">
+        <button routerLink="/profile" (click)="closeMobileMenu()" class="cursor-pointer w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-green-50 transition-colors text-left">
           <i class="fa-solid fa-user text-gray-400 w-5"></i>
           <span class="text-sm font-medium text-gray-700">{{ userData().name }}</span>
         </button>

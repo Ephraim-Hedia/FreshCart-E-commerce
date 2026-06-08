@@ -212,7 +212,13 @@
                   <i class="fa-solid fa-bag-shopping w-4 text-gray-500"></i> My Orders
                 </button>
                 <button (click)="navigateToWishlist()" class="cursor-pointer w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 text-left">
-                  <i class="fa-regular fa-heart w-4 text-gray-500"></i> My Wishlist
+                  <i class="fa-regular fa-heart w-4 text-gray-500"></i>
+                  My Wishlist
+                  @if (wishlistItemsCount() > 0) {
+                    <span class="ml-auto w-5 h-5 flex items-center justify-center text-[10px] font-bold text-white bg-red-500 rounded-full">
+                      {{ wishlistItemsCount() }}
+                    </span>
+                  }
                 </button>
                 <button (click)="navigateToAddresses()" class="cursor-pointer w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 text-left">
                   <i class="fa-solid fa-location-dot w-4 text-gray-500"></i> Addresses
@@ -250,10 +256,10 @@
 
       <!-- ===== MOBILE RIGHT SIDE ===== -->
       <!-- Wishlist (mobile) -->
-      <a routerLink="/wishlist" class="flex lg:hidden relative items-center text-gray-500">
+      <a routerLink="/wishlist" class="flex lg:hidden relative items-center text-gray-500 p-2">
         <i class="fa-regular fa-heart text-xl"></i>
         @if (wishlistItemsCount() > 0) {
-          <span class="absolute -top-1 -right-1 w-4 h-4 flex items-center justify-center text-[9px] font-bold text-white bg-red-500 rounded-full">
+          <span class="absolute top-0 right-0 w-4 h-4 flex items-center justify-center text-[9px] font-bold text-white bg-red-500 rounded-full ring-2 ring-white">
             {{ wishlistItemsCount() }}
           </span>
         }
@@ -327,6 +333,11 @@
       <a routerLink="/wishlist" (click)="closeMobileMenu()" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
         <i class="fa-regular fa-heart text-red-500 w-5"></i>
         Wishlist
+        @if (wishlistItemsCount() > 0) {
+          <span class="ml-auto w-5 h-5 flex items-center justify-center text-xs font-bold text-white bg-red-500 rounded-full">
+            {{ wishlistItemsCount() }}
+          </span>
+        }
       </a>
       <a routerLink="/cart" (click)="closeMobileMenu()" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
         <i class="fa-solid fa-cart-shopping text-green-600 w-5"></i>
